@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- 要调用的工作类 -->
+	<bean id="carDesJob" class="com.kay.quartz.QuartzJob">
+		<property name="localPath" value="${quartz.cron.carDesJob.localPath}" />
+		<property name="ftpHost" value="${quartz.cron.carDesJob.ftpHost}" />
+		<property name="ftpPort" value="${quartz.cron.carDesJob.ftpPort}" />
+		<property name="ftpPath" value="${quartz.cron.carDesJob.ftpPath}" />
+		<property name="ftpFilename" value="${quartz.cron.carDesJob.ftpFilename}" />
+		<property name="ftpUsername" value="${quartz.cron.carDesJob.ftpUsername}" />
+		<property name="ftpPassword" value="${quartz.cron.carDesJob.ftpPassword}" />
+	</bean>
+	<!-- 定义调用对象和调用对象的方法 -->
+	<bean id="carDesTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject">
+			<ref bean="carDesTask" />
+		</property>
+		<!-- 调用类中的方法 -->
+		<property name="targetMethod">
+			<value>work</value>
+		</property>
+	</bean>
+	<!-- 定义触发时间 -->
+	<bean id="carDesTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="carDesTask" />
+		</property>
+		<!-- cron表达式 -->
+		<property name="cronExpression">
+			<value>${quartz.cron.carDesTrigger}</value>
+		</property>
+	</bean>
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序 -->
+	<bean id="startQuertz"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="carDesTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>

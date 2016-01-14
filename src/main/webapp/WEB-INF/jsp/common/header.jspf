@@ -1,5 +1,5 @@
 <%@ page language="java"
-import="com.qinjiance.tourist.util.CookieUtil"
+import="com.qinjiance.keli.util.CookieUtil"
 contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <div class="header1 newpage">

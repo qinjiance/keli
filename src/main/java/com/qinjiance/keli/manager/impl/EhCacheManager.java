@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import net.sf.ehcache.Ehcache;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,8 @@ import org.springframework.stereotype.Service;
 import com.qinjiance.keli.manager.IEhCacheManager;
 import com.qinjiance.keli.util.cache.EhCacheUtil;
 import com.qinjiance.keli.util.cache.exception.CacheException;
+
+import net.sf.ehcache.Ehcache;
 
 /**
  * @author "Jiance Qin"
@@ -49,7 +49,7 @@ public class EhCacheManager implements IEhCacheManager {
 	 * 
 	 */
 	public static enum CacheType {
-		DAYLY("daylyCache"), MIN1("min1Cache"), MIN3("min3Cache");
+		DAYLY("daylyCache"), MIN1("min1Cache"), MIN15("min15Cache");
 		private CacheType(String cacheName) {
 
 			this.cacheName = cacheName;
@@ -70,7 +70,7 @@ public class EhCacheManager implements IEhCacheManager {
 	private CacheManager cacheManager;
 
 	private Cache dalyCache;
-	private Cache min3Cache;
+	private Cache min15Cache;
 	private Cache min1Cache;
 
 	/**
@@ -88,7 +88,7 @@ public class EhCacheManager implements IEhCacheManager {
 	public void postInit() throws CacheException {
 
 		dalyCache = EhCacheUtil.getCache(cacheManager, CacheType.DAYLY.getCacheName());
-		min3Cache = EhCacheUtil.getCache(cacheManager, CacheType.MIN3.getCacheName());
+		min15Cache = EhCacheUtil.getCache(cacheManager, CacheType.MIN15.getCacheName());
 		min1Cache = EhCacheUtil.getCache(cacheManager, CacheType.MIN1.getCacheName());
 
 	}
@@ -111,8 +111,8 @@ public class EhCacheManager implements IEhCacheManager {
 			return dalyCache;
 		case MIN1:
 			return min1Cache;
-		case MIN3:
-			return min3Cache;
+		case MIN15:
+			return min15Cache;
 		default:
 			return null;
 		}
@@ -136,8 +136,8 @@ public class EhCacheManager implements IEhCacheManager {
 			return (Ehcache) dalyCache.getNativeCache();
 		case MIN1:
 			return (Ehcache) min1Cache.getNativeCache();
-		case MIN3:
-			return (Ehcache) min3Cache.getNativeCache();
+		case MIN15:
+			return (Ehcache) min15Cache.getNativeCache();
 		default:
 			return null;
 		}

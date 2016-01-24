@@ -311,14 +311,14 @@
             maxElementsOnDisk="0"
             memoryStoreEvictionPolicy="LRU">
     </cache>
-     <cache name="min3Cache"
+     <cache name="min15Cache"
     		maxElementsInMemory="1000000"
             eternal="false"
             overflowToDisk="false"
             diskPersistent="false"
             diskSpoolBufferSizeMB="0"
-            timeToIdleSeconds="180"
-            timeToLiveSeconds="180"
+            timeToIdleSeconds="900"
+            timeToLiveSeconds="900"
             maxElementsOnDisk="0"
             memoryStoreEvictionPolicy="LRU">
     </cache>

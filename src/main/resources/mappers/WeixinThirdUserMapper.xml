@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qinjiance.keli.mapper.WeixinThirdUserMapper">
+    <insert id="insert" parameterType="weixinThirdUser">
+        INSERT INTO 
+    		weixin_third_user (user_id, openid, access_token, expires_in, refresh_token, 
+    		scope, nickname, sex, province, city, headimgurl, privilege, unionid, 
+    		create_time, update_time) 
+    	VALUES 
+    		(#{userId}, #{openid}, #{accessToken}, #{expiresIn}, #{refreshToken}, 
+    		#{scope}, #{nickname}, #{sex}, #{province}, #{country}, #{headimgurl}, #{privilege}, #{unionid},
+    		now(), now())
+    </insert>
+</mapper>

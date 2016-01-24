@@ -9,14 +9,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import module.laohu.commons.util.EncryptUtils;
-import module.laohu.commons.util.SecurityUtil;
-import module.laohu.commons.util.SpringUtils;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import module.laohu.commons.util.EncryptUtils;
+import module.laohu.commons.util.SecurityUtil;
+import module.laohu.commons.util.SpringUtils;
 
 /**
  * Rewrite CookieUtil
@@ -97,15 +97,12 @@ public final class CookieUtil {
 	 * @param liveSecond
 	 * @return
 	 */
-	public static boolean setLoginCookie(HttpServletResponse response, Long userId, String nickname, String email,
-			String mobile, int expireSeconds, boolean isAutoLogin) {
+	public static boolean setLoginCookie(HttpServletResponse response, Long userId, String name, String nickname,
+			int expireSeconds) {
 
-		String cookieValue = generateCookieValue(userId, nickname, email, mobile);
+		String cookieValue = generateCookieValue(userId, name, nickname);
 		boolean result = StringUtils.isNotBlank(cookieValue)
 				&& setCookie(response, DOMAIN, LOGIN_COOKIE_KEY, cookieValue, expireSeconds);
-		if (result && isAutoLogin) {
-			result = setAutoLoginCookie(response, expireSeconds, cookieValue);
-		}
 		return result;
 	}
 
@@ -230,40 +227,19 @@ public final class CookieUtil {
 	}
 
 	/**
-	 * 从user cookie中取得mobile
+	 * 从user cookie中取得name
 	 * 
 	 * @param request
 	 * @return
 	 */
-	public static String getMobileFromCookie() {
+	public static String getNameFromCookie() {
 
 		String[] strs = parseCookieValue(SpringUtils.getHttpServletRequest(), LOGIN_COOKIE_KEY);
 		if (ArrayUtils.isEmpty(strs)) {
 			return null;
 		}
 		try {
-			return new String(EncryptUtils.base64Decode(strs[3]), CHARSET);
-		} catch (NumberFormatException e) {
-			return null;
-		} catch (UnsupportedEncodingException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * 从user cookie中取得email
-	 * 
-	 * @param request
-	 * @return
-	 */
-	public static String getEmailFromCookie() {
-
-		String[] strs = parseCookieValue(SpringUtils.getHttpServletRequest(), LOGIN_COOKIE_KEY);
-		if (ArrayUtils.isEmpty(strs)) {
-			return null;
-		}
-		try {
-			return new String(EncryptUtils.base64Decode(strs[2]), CHARSET);
+			return new String(EncryptUtils.base64Decode(strs[1]), CHARSET);
 		} catch (NumberFormatException e) {
 			return null;
 		} catch (UnsupportedEncodingException e) {
@@ -284,7 +260,7 @@ public final class CookieUtil {
 			return null;
 		}
 		try {
-			return new String(EncryptUtils.base64Decode(strs[1]), CHARSET);
+			return new String(EncryptUtils.base64Decode(strs[2]), CHARSET);
 		} catch (NumberFormatException e) {
 			return null;
 		} catch (UnsupportedEncodingException e) {
@@ -340,10 +316,10 @@ public final class CookieUtil {
 	 * @param response
 	 * @param expire
 	 */
-	public static void updateCookieInfo(HttpServletResponse response, Long userId, String nickname, String email,
-			String mobile, int expire) {
+	public static void updateCookieInfo(HttpServletResponse response, Long userId, String name, String nickname,
+			int expire) {
 
-		String cookieValue = generateCookieValue(userId, nickname, email, mobile);
+		String cookieValue = generateCookieValue(userId, name, nickname);
 		if (StringUtils.isNotBlank(cookieValue)) {
 			Long autoLoginUserId = CookieUtil.getUserIdFromAutoLoginCookie();
 			if (autoLoginUserId != null && autoLoginUserId.longValue() > 0) {
@@ -408,12 +384,11 @@ public final class CookieUtil {
 					if (StringUtils.isNotBlank(cookieValue)) {
 						String[] strs = cookieValue.split("\\" + SPLITER);
 						// 长度
-						if (strs.length == 5) {
+						if (strs.length == 4) {
 							StringBuilder sb = new StringBuilder();
-							sb.append(strs[0]).append(SPLITER).append(strs[1]).append(SPLITER).append(strs[2])
-									.append(SPLITER).append(strs[3]);
+							sb.append(strs[0]).append(SPLITER).append(strs[1]).append(SPLITER).append(strs[2]);
 							String sign = getSign(sb.toString());
-							if (sign.equals(strs[4])) {
+							if (sign.equals(strs[3])) {
 								return strs;
 							}
 						}
@@ -433,20 +408,16 @@ public final class CookieUtil {
 	 * @param sessionId
 	 * @return
 	 */
-	private static String generateCookieValue(Long userId, String nickname, String email, String mobile) {
+	private static String generateCookieValue(Long userId, String name, String nickname) {
 
-		if (StringUtils.isBlank(email)) {
-			email = "";
-		}
-		if (StringUtils.isBlank(mobile)) {
-			mobile = "";
+		if (StringUtils.isBlank(nickname)) {
+			nickname = "";
 		}
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append(EncryptUtils.defaultBase64Encode(userId.toString())).append(SPLITER)
-					.append(EncryptUtils.defaultBase64Encode(nickname)).append(SPLITER)
-					.append(EncryptUtils.defaultBase64Encode(email)).append(SPLITER)
-					.append(EncryptUtils.defaultBase64Encode(mobile));
+					.append(EncryptUtils.defaultBase64Encode(name)).append(SPLITER)
+					.append(EncryptUtils.defaultBase64Encode(nickname));
 			// 签名
 			String sign = getSign(sb.toString());
 			sb.append(SPLITER).append(sign);

@@ -18,5 +18,6 @@ import com.qinjiance.keli.model.vo.WaterQPos;
  */
 public interface IWaterManager {
 
-	public WaterQPos getWaterQ(String lati, String longi,Integer yinshui) throws ManagerException;
+	public WaterQPos getWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui, Integer baojie)
+			throws ManagerException;
 }

@@ -30,7 +30,8 @@ public class WaterManager implements IWaterManager {
 	}
 
 	@Override
-	public WaterQPos getWaterQ(String lati, String longi, Integer yinshui) throws ManagerException {
+	public WaterQPos getWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui, Integer baojie)
+			throws ManagerException {
 		WaterQPos waterQPos = new WaterQPos();
 		waterQPos.setPosName("完美世界大厦");
 		waterQPos.setWaterQ(RandomUtils.nextInt(1000));

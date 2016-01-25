@@ -49,9 +49,9 @@ public class WaterController extends BaseKeliController {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		model.put("lati", lati);
 		model.put("longi", longi);
-		
+
 		try {
-			WaterQPos waterQPos = waterManager.getWaterQ(lati, longi, null);
+			WaterQPos waterQPos = waterManager.getWaterQ(lati, longi, null, null, null);
 			model.put("waterQPos", waterQPos);
 		} catch (ManagerException e) {
 			resultMap.put(e.getClass().getSimpleName(), e.getMessage());
@@ -70,12 +70,12 @@ public class WaterController extends BaseKeliController {
 	// @NeedCookie
 	@RequestMapping(value = "/json/getWaterQ")
 	@ResponseBody
-	public ResponseResult<WaterQPos> jsonGetWaterQ(String lati, String longi, Integer yinshui,
-			HttpServletRequest request) {
+	public ResponseResult<WaterQPos> jsonGetWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui,
+			Integer baojie, HttpServletRequest request) {
 		ResponseResult<WaterQPos> rr = new ResponseResult<WaterQPos>();
 		rr.setCode(MessageCode.SERVICE_INTERNAL_ERROR.getCode());
 		try {
-			WaterQPos waterQPos = waterManager.getWaterQ(lati, longi, yinshui);
+			WaterQPos waterQPos = waterManager.getWaterQ(lati, longi, yinshui, tongzhuangshui, baojie);
 			rr.setCode(MessageCode.SUCC_0.getCode());
 			rr.setResult(waterQPos);
 		} catch (ManagerException e) {
@@ -87,4 +87,26 @@ public class WaterController extends BaseKeliController {
 		return rr;
 	}
 
+	/**
+	 * 水质
+	 * 
+	 */
+	// @NeedCookie
+	@RequestMapping(value = "/myWaterQ")
+	public String myWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui,
+			Integer baojie, ModelMap model, HttpServletRequest request) {
+		// log记录结果用
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			myWaterQ
+			model.put("myWaterQ", myWaterQ);
+		} catch (ManagerException e) {
+			resultMap.put(e.getClass().getSimpleName(), e.getMessage());
+		}
+
+		// log记录结果用
+		resultMap.putAll(model);
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, resultMap);
+		return "water/myWaterQ";
+	}
 }

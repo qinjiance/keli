@@ -13,3 +13,6 @@
 .inp span{padding:5px;border: 1px solid #ccc;margin-right: 10px;cursor: pointer;}
 .inp span:hover{border: 1px solid rgb(83,209,173);color:rgb(83,209,173);}
 .inp span.on{border: 1px solid rgb(83,209,173);color:rgb(83,209,173);}
+.inp p{width:400px;padding:5px;border: 1px solid #ccc;margin-left: 115px;cursor: pointer;}
+.inp p:hover{border: 1px solid rgb(83,209,173);color:rgb(83,209,173);}
+.inp p.on{border: 1px solid rgb(83,209,173);color:rgb(83,209,173);}

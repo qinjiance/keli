@@ -56,7 +56,7 @@ public class EmailManager implements IEmailManager {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.qinjiance.tourist.manager.IEmailManager#sendEmailCaptcha(java.lang
+	 * com.qinjiance.keli.manager.IEmailManager#sendEmailCaptcha(java.lang
 	 * .String, java.lang.String)
 	 */
 	@Override

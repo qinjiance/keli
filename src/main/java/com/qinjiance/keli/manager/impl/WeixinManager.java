@@ -3,9 +3,16 @@
  */
 package com.qinjiance.keli.manager.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
+
+import module.laohu.commons.util.HttpClientUtil;
+import module.laohu.commons.util.JsonUtils;
+import module.laohu.commons.util.SpringUtils;
+import module.laohu.commons.util.WebUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -16,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.manager.IEhCacheManager;
+import com.qinjiance.keli.manager.ISequenceManager;
 import com.qinjiance.keli.manager.IWeixinManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.manager.impl.EhCacheManager.CacheType;
@@ -28,16 +36,11 @@ import com.qinjiance.keli.model.vo.WeixinPublicUser;
 import com.qinjiance.keli.util.CookieUtil;
 import com.qinjiance.keli.util.RandomUtil;
 
-import module.laohu.commons.util.HttpClientUtil;
-import module.laohu.commons.util.JsonUtils;
-import module.laohu.commons.util.SpringUtils;
-import module.laohu.commons.util.WebUtils;
-
 /**
  * @author Administrator
- *
+ * 
  * @datetime 2016年1月25日 上午1:07:21
- *
+ * 
  * @desc
  */
 @Service
@@ -46,13 +49,13 @@ public class WeixinManager implements IWeixinManager {
 	protected final static Logger logger = LoggerFactory.getLogger(WeixinManager.class);
 
 	private final static String APP_ID = "wxa33fe7c2b2eebcbd";
-	private final static String APP_SECRET = "";
+	private final static String APP_SECRET = "7871546c0d202f65dd9c3146cf3c100e";
 	private final static String PUBLIC_OAUTH_URL = "https://open.weixin.qq.com/connect/oauth2/authorize";
 	private final static String PUBLIC_OAUTH_USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo";
 	private final static String PUBLIC_OAUTH_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";
 
-	@Value("#{configProperties['weixin_oauth_redirect_url']}")
-	private final static String WEIXIN_OAUTH_REDIRECT_URL = "";
+	@Value(value = "#{configProperties['weixin_oauth_redirect_url']}")
+	private String WEIXIN_OAUTH_REDIRECT_URL = "";
 
 	@Autowired
 	private IEhCacheManager ehCacheManager;
@@ -60,6 +63,8 @@ public class WeixinManager implements IWeixinManager {
 	private WeixinThirdUserMapper weixinThirdUserMapper;
 	@Autowired
 	private UserMapper userMapper;
+	@Autowired
+	private ISequenceManager sequenceManager;
 
 	/**
 	 * 
@@ -79,9 +84,14 @@ public class WeixinManager implements IWeixinManager {
 		ehCacheManager.putToCache(CacheType.MIN15, ticket, location);
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(PUBLIC_OAUTH_URL).append("?appid=").append(APP_ID).append("&redirect_uri=")
-				.append(WEIXIN_OAUTH_REDIRECT_URL).append("&response_type=code&scope=snsapi_userinfo&state=")
-				.append(ticket).append("#wechat_redirect");
+		try {
+			sb.append(PUBLIC_OAUTH_URL).append("?appid=").append(APP_ID).append("&redirect_uri=")
+					.append(URLEncoder.encode(WEIXIN_OAUTH_REDIRECT_URL, Constants.CHARSET))
+					.append("&response_type=code&scope=snsapi_userinfo&state=").append(ticket)
+					.append("#wechat_redirect");
+		} catch (UnsupportedEncodingException e) {
+			logger.error("UnsupportedEncodingException: ", e);
+		}
 		return sb.toString();
 	}
 
@@ -134,8 +144,9 @@ public class WeixinManager implements IWeixinManager {
 		User user = null;
 		if (weixinThirdUser == null) {
 			user = new User();
-			user.setId(id);
-			user.setName("Clean" + id);
+			Long userId = sequenceManager.getUserIdSeq();
+			user.setId(userId);
+			user.setName("Clean" + userId);
 			user.setSalt("");
 			user.setPassword("");
 			user.setIp(WebUtils.getIpAddress(SpringUtils.getHttpServletRequest()));
@@ -158,7 +169,7 @@ public class WeixinManager implements IWeixinManager {
 			weixinThirdUser.setScope(accessToken.getScope());
 			weixinThirdUser.setSex(publicUser.getSex());
 			weixinThirdUser.setUnionid(accessToken.getUnionid());
-			weixinThirdUser.setUserId(id);
+			weixinThirdUser.setUserId(userId);
 			ret = weixinThirdUserMapper.insert(weixinThirdUser);
 			if (ret == null || ret != 1) {
 				return null;

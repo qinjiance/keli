@@ -13,13 +13,13 @@
 	<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
 		destroy-method="close">
 		<!-- Connection Info -->
-		<property name="driverClassName" value="${tourist.jdbc.driverClassName}" />
-		<property name="url" value="${tourist.jdbc.url}" />
-		<property name="username" value="${tourist.jdbc.username}" />
-		<property name="password" value="${tourist.jdbc.password}" />
+		<property name="driverClassName" value="${keli.jdbc.driverClassName}" />
+		<property name="url" value="${keli.jdbc.url}" />
+		<property name="username" value="${keli.jdbc.username}" />
+		<property name="password" value="${keli.jdbc.password}" />
 		<!-- Connection Pooling Info -->
-		<property name="maxActive" value="${tourist.jdbc.maxActive}" />
-		<property name="maxIdle" value="${tourist.jdbc.maxIdle}" />
+		<property name="maxActive" value="${keli.jdbc.maxActive}" />
+		<property name="maxIdle" value="${keli.jdbc.maxIdle}" />
 		<property name="defaultAutoCommit" value="true" />
 		<!-- attributes are shared between commons-dbcp and tomcat-jdbc-pool -->
 		<property name="maxWait" value="1000" />
@@ -36,7 +36,7 @@
 	<!-- mybatis -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="typeAliasesPackage" value="com.qinjiance.tourist.model.po" />
+		<property name="typeAliasesPackage" value="com.qinjiance.keli.model.po" />
 		<property name="transactionFactory">
 			<bean
 				class="org.mybatis.spring.transaction.SpringManagedTransactionFactory" />
@@ -52,7 +52,7 @@
 	</bean>
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.qinjiance.tourist.mapper" />
+		<property name="basePackage" value="com.qinjiance.keli.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 

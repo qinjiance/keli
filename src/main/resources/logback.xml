@@ -9,7 +9,7 @@
 		<level value="INFO" />
 		<appender-ref ref="STDOUT" />
 	</root>
-	<logger name="com.qinjiance.tourist.manager.impl.EhCacheManager"
+	<logger name="com.qinjiance.keli.manager.impl.EhCacheManager"
 		level="DEBUG" additivity="true">
 	</logger>
 	<logger name="org.mybatis.spring" level="TRACE" additivity="true">
@@ -17,7 +17,7 @@
 	<logger name="org.springframework.transaction" level="DEBUG"
 		additivity="true">
 	</logger>
-	<logger name="com.qinjiance.tourist.mapper" level="TRACE"
+	<logger name="com.qinjiance.keli.mapper" level="TRACE"
 		additivity="true">
 	</logger>
 	<logger

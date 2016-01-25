@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import module.laohu.commons.util.CheckStyleUtil;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,13 +15,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.qinjiance.keli.annotation.NeedCookie;
 import com.qinjiance.keli.annotation.SkipWhenUserLogin;
 import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.manager.IWeixinManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
-
-import module.laohu.commons.util.CheckStyleUtil;
 
 /**
  * @author "Jiance Qin"
@@ -41,7 +40,7 @@ public class IndexController extends BaseKeliController {
 	 * 首页
 	 * 
 	 */
-	@NeedCookie
+	// @NeedCookie
 	@RequestMapping(value = { "/", "/index" })
 	public String index(ModelMap model, HttpServletRequest request) {
 		// log记录结果用
@@ -83,6 +82,7 @@ public class IndexController extends BaseKeliController {
 		return REDIRECT + weixinOAuthUrl;
 	}
 
+	@SkipWhenUserLogin
 	@RequestMapping(value = "/weixinPublicOAuth")
 	public String weixinPublicOAuth(String code, @RequestParam String state, HttpServletRequest request,
 			HttpServletResponse response) {

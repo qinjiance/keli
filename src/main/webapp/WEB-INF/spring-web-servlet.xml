@@ -6,7 +6,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-	<context:component-scan base-package="com.qinjiance.tourist.controller" />
+	<context:component-scan base-package="com.qinjiance.keli.controller" />
 	<mvc:annotation-driven />
 
 	<bean id="viewResolver"
@@ -32,11 +32,11 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
-			<bean class="com.qinjiance.tourist.interceptor.LoginRequiredInterceptor" />
+			<bean class="com.qinjiance.keli.interceptor.LoginRequiredInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/remote/**" />
-			<bean class="com.qinjiance.tourist.interceptor.RemoteSecureInterceptor" />
+			<bean class="com.qinjiance.keli.interceptor.RemoteSecureInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
 	

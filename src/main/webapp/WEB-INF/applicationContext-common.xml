@@ -12,7 +12,7 @@
         				  http://www.springframework.org/schema/cache 
 						  http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-	<context:component-scan base-package="com.qinjiance.tourist">
+	<context:component-scan base-package="com.qinjiance.keli">
 		<context:exclude-filter type="annotation"
 			expression="org.springframework.stereotype.Controller" />
 		<context:exclude-filter type="annotation"

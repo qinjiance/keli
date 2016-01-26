@@ -41,7 +41,7 @@ public class IndexController extends BaseKeliController {
 	 * 首页
 	 * 
 	 */
-//	@NeedCookie
+	@NeedCookie
 	@RequestMapping(value = { "/", "/index" })
 	public String index(ModelMap model, HttpServletRequest request) {
 		// log记录结果用

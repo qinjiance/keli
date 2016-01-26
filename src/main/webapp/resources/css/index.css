@@ -2,8 +2,9 @@
 .landingImg{margin-top: 150px;}
 .landingImg img{width:500px;}
 .landingTit{color:rgb(176,176,176);margin-top: 100px;font-size: 40px;}
-.landingA{font-size: 40px;margin-left:80px;text-decoration:none;display:block;color:#ffe;padding:10px 40px;margin-top: 250px; width: 400px; background-color: rgb(83,209,173);-moz-border-radius: 2px;/* Gecko browsers */-webkit-border-radius: 2px;/* Webkit browsers */border-radius:2px;/* W3C syntax */}
+.landingA{font-size: 40px;margin-left:80px;text-decoration:none;display:block;color:#ffe;padding:10px 40px;margin-top: 250px; width: 400px; background-color: rgb(83,209,173);-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius:2px;}
 .landingA:ACTIVE {}
 .loadingTT{color:rgb(176,176,176);margin-top: 20px;}
 .loadingTT2{color:#000;margin-top: 10px;}
-.loadingImg img{width:300px;margin-top: 100px;}
+.loadingImg{margin-top: 100px;}
+.loadingImg img{width:300px;}

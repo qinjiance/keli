@@ -1,7 +1,8 @@
 @charset "utf-8";
 html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, menu, nav, section, time, mark, audio, video, details, summary {margin: 0;	padding: 0;	border: 0;	font-size: 100%;	vertical-align: baseline;	background: transparent;
-	-webkit-text-size-adjust: 100%;	-ms-text-size-adjust: 100%;	text-size-adjust: 100%;}
-article, aside, figure, footer, header, nav, section, details, summary {display: block;}
+	-webkit-text-size-adjust: 100%;	-ms-text-size-adjust: 100%;	text-size-adjust: 100%;margin: 0;padding:0;}
+article, aside, figure, footer, header, nav, section, details, summary {display: block;margin: 0;padding:0;}
+img{margin: 0;}
 li{ list-style:none;}
 
 .left{float:left;}
@@ -12,6 +13,5 @@ li{ list-style:none;}
 
 body{ background-color:#fff; width:640px; overflow:hidden; text-align:center; color:#000; font-family: 'Microsoft YaHei';font-size: 12px;}
 .header .title{color:rgb(176,176,176);margin-top: 30px;margin-bottom: 50px;font-size: 30px;}
-.footer{ background-color: #ccc; width:640px;position:absolute;bottom:0;text-align: center;padding: 5px 0;}
 
 .mainBg{font-size: 30px;}

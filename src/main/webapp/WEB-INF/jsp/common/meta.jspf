@@ -2,4 +2,17 @@
 	pageEncoding="utf-8"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-<meta name="viewport" content="target-densitydpi=device-dpi,user-scalable=no,width=640px" />
+<script type="text/javascript">
+    var ua = navigator.userAgent;
+    if(/Android (\d+\.\d+)/.test(ua)){
+        var version = parseFloat(RegExp.$1);
+        if(version>2.3){
+            var phoneScale = parseInt(window.screen.width)/640;
+            document.write('<meta name="viewport" content="width=640, initial-scale=1.0, minimum-scale = '+ phoneScale +', maximum-scale = '+ phoneScale +', target-densitydpi=device-dpi">');
+        }else{
+            document.write('<meta name="viewport" content="width=640, target-densitydpi=device-dpi, initial-scale=1.0">');
+        }
+    }else{
+        document.write('<meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi, initial-scale=1.0">');
+    }
+</script>

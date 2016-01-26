@@ -247,6 +247,12 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
 	 */
 	@SuppressWarnings("rawtypes")
 	protected static void requestHandleLog(HttpServletRequest request, Object handler) {
+
+		String handlerName = ReflectUtil.getClassSimpleName(handler);
+		if (handlerName.equalsIgnoreCase("ResourceHttpRequestHandler")) {
+			return;
+		}
+
 		// 业务处理完成时间
 		Object requestStartTimeObj = request.getAttribute(Constants.REQUEST_START_TIME_KEY);
 		long requestStartTime = requestStartTimeObj == null ? System.currentTimeMillis() : (Long) requestStartTimeObj;

@@ -13,12 +13,15 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.qinjiance.keli.annotation.NeedCookie;
 import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.constants.MessageCode;
 import com.qinjiance.keli.manager.IWaterManager;
 import com.qinjiance.keli.manager.IWeixinManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
+import com.qinjiance.keli.model.vo.MyWaterQ;
 import com.qinjiance.keli.model.vo.WaterQPos;
+import com.qinjiance.keli.util.CookieUtil;
 
 /**
  * @author "Jiance Qin"
@@ -42,17 +45,22 @@ public class WaterController extends BaseKeliController {
 	 * 水质
 	 * 
 	 */
-	// @NeedCookie
+	@NeedCookie
 	@RequestMapping(value = "/getWaterQ")
 	public String getWaterQ(String lati, String longi, ModelMap model, HttpServletRequest request) {
 		// log记录结果用
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		model.put("lati", lati);
 		model.put("longi", longi);
-
+		MyWaterQ myWaterQ = null;
 		try {
-			WaterQPos waterQPos = waterManager.getWaterQ(lati, longi, null, null, null);
-			model.put("waterQPos", waterQPos);
+			myWaterQ = waterManager.getMyWaterQ(CookieUtil.getUserIdFromCookie());
+			if (myWaterQ == null) {
+				WaterQPos waterQPos = waterManager.getWaterQ(lati, longi, null, null, null);
+				model.put("waterQPos", waterQPos);
+			} else {
+				model.put("myWaterQ", myWaterQ);
+			}
 		} catch (ManagerException e) {
 			resultMap.put(e.getClass().getSimpleName(), e.getMessage());
 		}
@@ -60,14 +68,18 @@ public class WaterController extends BaseKeliController {
 		// log记录结果用
 		resultMap.putAll(model);
 		request.setAttribute(Constants.REQUEST_RETURN_KEY, resultMap);
-		return "water/waterQ";
+		if (myWaterQ == null) {
+			return "water/waterQ";
+		} else {
+			return "water/myWaterQ";
+		}
 	}
 
 	/**
 	 * 水质
 	 * 
 	 */
-	// @NeedCookie
+	@NeedCookie
 	@RequestMapping(value = "/json/getWaterQ")
 	@ResponseBody
 	public ResponseResult<WaterQPos> jsonGetWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui,
@@ -91,14 +103,15 @@ public class WaterController extends BaseKeliController {
 	 * 水质
 	 * 
 	 */
-	// @NeedCookie
+	@NeedCookie
 	@RequestMapping(value = "/myWaterQ")
-	public String myWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui,
+	public String myWaterQ(String lati, String longi, String location, Integer yinshui, Integer tongzhuangshui,
 			Integer baojie, ModelMap model, HttpServletRequest request) {
 		// log记录结果用
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			myWaterQ
+			MyWaterQ myWaterQ = waterManager.myWaterQ(CookieUtil.getUserIdFromCookie(), lati, longi, location, yinshui,
+					tongzhuangshui, baojie);
 			model.put("myWaterQ", myWaterQ);
 		} catch (ManagerException e) {
 			resultMap.put(e.getClass().getSimpleName(), e.getMessage());

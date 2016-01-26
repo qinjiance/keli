@@ -11,5 +11,7 @@ li{ list-style:none;}
 
 
 body{ background-color:#fff; width:640px; overflow:hidden; text-align:center; color:#000; font-family: 'Microsoft YaHei';font-size: 12px;}
-.header .title{color:rgb(176,176,176);margin-top: 30px;margin-bottom: 50px;}
-.footer{ background-color: #ccc; width:100%;position:absolute;bottom:0;text-align: center;padding: 5px;}
+.header .title{color:rgb(176,176,176);margin-top: 30px;margin-bottom: 50px;font-size: 30px;}
+.footer{ background-color: #ccc; width:640px;position:absolute;bottom:0;text-align: center;padding: 5px 0;}
+
+.mainBg{font-size: 30px;}

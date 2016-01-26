@@ -15,6 +15,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.qinjiance.keli.annotation.NeedCookie;
 import com.qinjiance.keli.annotation.SkipWhenUserLogin;
 import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.manager.IWeixinManager;
@@ -40,7 +41,7 @@ public class IndexController extends BaseKeliController {
 	 * 首页
 	 * 
 	 */
-	// @NeedCookie
+//	@NeedCookie
 	@RequestMapping(value = { "/", "/index" })
 	public String index(ModelMap model, HttpServletRequest request) {
 		// log记录结果用

@@ -26,7 +26,6 @@ public class WeixinPublicUser extends BaseObject {
 	private String city;
 	private String country;
 	private String headimgurl;
-	private String privilege;
 	private String unionid;
 
 	/**
@@ -89,14 +88,6 @@ public class WeixinPublicUser extends BaseObject {
 
 	public void setHeadimgurl(String headimgurl) {
 		this.headimgurl = headimgurl;
-	}
-
-	public String getPrivilege() {
-		return privilege;
-	}
-
-	public void setPrivilege(String privilege) {
-		this.privilege = privilege;
 	}
 
 	public String getUnionid() {

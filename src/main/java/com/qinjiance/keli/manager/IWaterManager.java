@@ -4,6 +4,7 @@
 package com.qinjiance.keli.manager;
 
 import com.qinjiance.keli.manager.exception.ManagerException;
+import com.qinjiance.keli.model.vo.MyWaterQ;
 import com.qinjiance.keli.model.vo.WaterQPos;
 
 /**
@@ -20,4 +21,9 @@ public interface IWaterManager {
 
 	public WaterQPos getWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui, Integer baojie)
 			throws ManagerException;
+
+	public MyWaterQ myWaterQ(Long userId, String lati, String longi, String location, Integer yinshui,
+			Integer tongzhuangshui, Integer baojie) throws ManagerException;
+	
+	public MyWaterQ getMyWaterQ(Long userId)throws ManagerException;
 }

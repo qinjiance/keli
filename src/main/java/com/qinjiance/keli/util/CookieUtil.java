@@ -9,14 +9,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import module.laohu.commons.util.EncryptUtils;
+import module.laohu.commons.util.SecurityUtil;
+import module.laohu.commons.util.SpringUtils;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import module.laohu.commons.util.EncryptUtils;
-import module.laohu.commons.util.SecurityUtil;
-import module.laohu.commons.util.SpringUtils;
 
 /**
  * Rewrite CookieUtil
@@ -36,7 +36,7 @@ public final class CookieUtil {
 	/**
 	 * ARC Games cookie域
 	 */
-	public static final String DOMAIN = ".my3w.com";
+	public static final String DOMAIN = ".imclean.cn";
 	public static final String PATH = "/";
 
 	public static final int COOKIE_CLEAR = 0;
@@ -98,9 +98,9 @@ public final class CookieUtil {
 	 * @return
 	 */
 	public static boolean setLoginCookie(HttpServletResponse response, Long userId, String name, String nickname,
-			int expireSeconds) {
+			String avatar, int expireSeconds) {
 
-		String cookieValue = generateCookieValue(userId, name, nickname);
+		String cookieValue = generateCookieValue(userId, name, nickname, avatar);
 		boolean result = StringUtils.isNotBlank(cookieValue)
 				&& setCookie(response, DOMAIN, LOGIN_COOKIE_KEY, cookieValue, expireSeconds);
 		return result;
@@ -253,6 +253,27 @@ public final class CookieUtil {
 	 * @param request
 	 * @return
 	 */
+	public static String getAvatarFromCookie() {
+
+		String[] strs = parseCookieValue(SpringUtils.getHttpServletRequest(), LOGIN_COOKIE_KEY);
+		if (ArrayUtils.isEmpty(strs)) {
+			return null;
+		}
+		try {
+			return new String(EncryptUtils.base64Decode(strs[3]), CHARSET);
+		} catch (NumberFormatException e) {
+			return null;
+		} catch (UnsupportedEncodingException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * 从user cookie中取得nickname
+	 * 
+	 * @param request
+	 * @return
+	 */
 	public static String getNicknameFromCookie() {
 
 		String[] strs = parseCookieValue(SpringUtils.getHttpServletRequest(), LOGIN_COOKIE_KEY);
@@ -317,9 +338,9 @@ public final class CookieUtil {
 	 * @param expire
 	 */
 	public static void updateCookieInfo(HttpServletResponse response, Long userId, String name, String nickname,
-			int expire) {
+			String avatar, int expire) {
 
-		String cookieValue = generateCookieValue(userId, name, nickname);
+		String cookieValue = generateCookieValue(userId, name, nickname, avatar);
 		if (StringUtils.isNotBlank(cookieValue)) {
 			Long autoLoginUserId = CookieUtil.getUserIdFromAutoLoginCookie();
 			if (autoLoginUserId != null && autoLoginUserId.longValue() > 0) {
@@ -384,11 +405,12 @@ public final class CookieUtil {
 					if (StringUtils.isNotBlank(cookieValue)) {
 						String[] strs = cookieValue.split("\\" + SPLITER);
 						// 长度
-						if (strs.length == 4) {
+						if (strs.length == 5) {
 							StringBuilder sb = new StringBuilder();
-							sb.append(strs[0]).append(SPLITER).append(strs[1]).append(SPLITER).append(strs[2]);
+							sb.append(strs[0]).append(SPLITER).append(strs[1]).append(SPLITER).append(strs[2])
+									.append(SPLITER).append(strs[3]);
 							String sign = getSign(sb.toString());
-							if (sign.equals(strs[3])) {
+							if (sign.equals(strs[4])) {
 								return strs;
 							}
 						}
@@ -408,7 +430,7 @@ public final class CookieUtil {
 	 * @param sessionId
 	 * @return
 	 */
-	private static String generateCookieValue(Long userId, String name, String nickname) {
+	private static String generateCookieValue(Long userId, String name, String nickname, String avatar) {
 
 		if (StringUtils.isBlank(nickname)) {
 			nickname = "";
@@ -417,7 +439,8 @@ public final class CookieUtil {
 			StringBuilder sb = new StringBuilder();
 			sb.append(EncryptUtils.defaultBase64Encode(userId.toString())).append(SPLITER)
 					.append(EncryptUtils.defaultBase64Encode(name)).append(SPLITER)
-					.append(EncryptUtils.defaultBase64Encode(nickname));
+					.append(EncryptUtils.defaultBase64Encode(nickname)).append(SPLITER)
+					.append(EncryptUtils.defaultBase64Encode(avatar));
 			// 签名
 			String sign = getSign(sb.toString());
 			sb.append(SPLITER).append(sign);

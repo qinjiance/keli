@@ -13,19 +13,22 @@
 	href="${ctx}<fmt:message key="static.resources.host"/>/css/index.css" />
 </head>
 <body>
-	<div class="landing">
-		<p class="landingImg" ><img src="${ctx}<fmt:message key="static.resources.host"/>/images/lbs.jpg" /></p>
-	    <p class="landingTit">办公室水质地图</p>
-	    <p><a class="landingA" href="javascript:void(0);">开始绘制地图</a></p>
-	</div>	
-	
-	<div class="loading" style="display:none;">
-		<p class="loadingTT">办公室水质地图</p>
-		<p class="loadingImg"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/loading1.gif" /></p>
-		<p class="loadingTT2">抽取样本中...</p>
-		<p class="loadingImg"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/loading2.gif" /></p>
-		<p class="loadingTT2">定位中...</p>
+	<div class="mainBg">
+		<div class="landing">
+			<p class="landingImg" ><img src="${ctx}<fmt:message key="static.resources.host"/>/images/lbs.jpg" /></p>
+		    <p class="landingTit">办公室水质地图</p>
+		    <p><a class="landingA" href="javascript:void(0);">开始绘制地图</a></p>
+		</div>	
+		
+		<div class="loading" style="display:none;">
+			<p class="loadingTT">办公室水质地图</p>
+			<p class="loadingImg"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/loading1.gif" /></p>
+			<p class="loadingTT2">抽取样本中...</p>
+			<p class="loadingImg"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/loading2.gif" /></p>
+			<p class="loadingTT2">定位中...</p>
+		</div>
 	</div>
+		
 	<!-- footer -->
 	<%@include file="./common/footer.jspf"%>
 

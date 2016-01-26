@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qinjiance.keli.mapper.WaterQMapper">
+    <insert id="insert" parameterType="waterQ">
+        INSERT INTO 
+    		water_q (user_id, lati, longi, yinshui, model_id, location,
+    		model_water_q, model_loca, model_lati, model_longi, tongzhuangshui, yinshuiji, local_water_q, yinshui_water_q,
+    		tong_water_q, yinshuiji_water_q, zonghe_water_q, create_time, update_time) 
+    	VALUES 
+    		(#{userId}, #{lati}, #{longi}, #{yinshui}, #{modelId}, #{location},
+    		#{modelWaterQ}, #{modelLoca}, #{modelLati}, #{modelLongi}, #{tongzhuangshui}, #{yinshuiji}, #{localWaterQ}, #{yinshuiWaterQ},
+    		#{tongWaterQ}, #{yinshuijiWaterQ}, #{zongheWaterQ}, now(), now())
+    </insert>
+</mapper>

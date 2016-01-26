@@ -6,6 +6,6 @@
         INSERT INTO 
     		user (id, name, salt, password, ip, create_time, update_time) 
     	VALUES 
-    		(#{id}, #{name}, #{salt}, #{password}, INET_ATON(#{registerIp}), now(), now())
+    		(#{id}, #{name}, #{salt}, #{password}, INET_ATON(#{ip}), now(), now())
     </insert>
 </mapper>

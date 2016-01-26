@@ -2,11 +2,11 @@
 .pt{margin: 50px 0;} 
 .pt .lab{margin-right: 250px;}
 .pt .color{padding: 2px 5px;border: 1px solid #ccc;}
-.num{margin: 70px 0 30px 0;color:rgb(255,159,14);font-size: 50px;}
+.num{margin: 50px 0 30px 0;color:rgb(255,159,14);font-size: 90px;}
 .wq{margin:0 0 100px 0;}
-.pos{margin:220px 0 70px 0;color:rgb(172,172,172);font-size: 18px;}
+.pos{margin:160px 0 70px 0;color:rgb(172,172,172);font-size: 32px;}
 .inp{margin: 70px 0 50px 0;}
-.inp input{border: none;border-bottom: 1px solid rgb(172,172,172);width: 380px}
+.inp input{border: none;border-bottom: 1px solid rgb(172,172,172);width: 380px;font-size: 32px;}
 .inp input:FOCUS{outline: none;}
 .btn{cursor:pointer;margin:70px 90px 100px 90px;width: 450px;border: 1px solid rgb(83,209,173);color: rgb(83,209,173);padding: 10px;-moz-border-radius: 2px;/* Gecko browsers */-webkit-border-radius: 2px;/* Webkit browsers */border-radius:2px;/* W3C syntax */}
 .btn.next{background-color:  rgb(83,209,173);color:#fff;}

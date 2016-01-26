@@ -163,7 +163,7 @@ public class WeixinManager implements IWeixinManager {
 			weixinThirdUser.setHeadimgurl(publicUser.getHeadimgurl());
 			weixinThirdUser.setNickname(publicUser.getNickname());
 			weixinThirdUser.setOpenid(accessToken.getOpenid());
-			weixinThirdUser.setPrivilege(publicUser.getPrivilege());
+			weixinThirdUser.setPrivilege("");
 			weixinThirdUser.setProvince(publicUser.getProvince());
 			weixinThirdUser.setRefreshToken(accessToken.getRefresh_token());
 			weixinThirdUser.setScope(accessToken.getScope());
@@ -182,11 +182,10 @@ public class WeixinManager implements IWeixinManager {
 		}
 		// 种cookie
 		boolean result = CookieUtil.setLoginCookie(httpServletResponse, user.getId(), user.getName(),
-				weixinThirdUser.getNickname(), CookieUtil.COOKIE_LIVE_10_DAYS);
+				weixinThirdUser.getNickname(), weixinThirdUser.getHeadimgurl(), CookieUtil.COOKIE_LIVE_10_DAYS);
 		if (!result) {
 			return null;
 		}
 		return location;
 	}
-
 }

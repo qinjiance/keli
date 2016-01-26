@@ -40,6 +40,15 @@ public class ReflectUtil {
 		return fullName.toString();
 	}
 
+	public static String getClassSimpleName(Object handler) {
+		if (handler instanceof HandlerMethod) {
+			HandlerMethod method = (HandlerMethod) handler;
+			return method.getBean().getClass().getSimpleName();
+		} else {
+			return handler.getClass().getSimpleName();
+		}
+	}
+
 	/**
 	 * 查找处理方法的注解.
 	 * 

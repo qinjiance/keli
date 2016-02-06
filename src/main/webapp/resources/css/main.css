@@ -12,6 +12,6 @@ li{ list-style:none;}
 
 
 body{ background-color:#fff; width:640px; overflow:hidden; text-align:center; color:#000; font-family: 'Microsoft YaHei';font-size: 12px;}
-.header .title{color:rgb(176,176,176);margin-top: 30px;margin-bottom: 50px;font-size: 30px;}
+.header .title{color:rgb(176,176,176);margin-top: 30px;margin-bottom: 10px;font-size: 30px;}
 
 .mainBg{font-size: 30px;}

@@ -39,10 +39,44 @@ public class WaterManager implements IWaterManager {
 	@Override
 	public WaterQPos getWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui, Integer baojie)
 			throws ManagerException {
+		// 监测点tds
+		Integer tds = RandomUtils.nextInt(1000);
+		if (yinshui != null) {
+			switch (yinshui) {
+			case 1:
+				tds = Long.valueOf(Math.round(tds * 0.1)).intValue();
+				break;
+			case 2:
+				tds = Long.valueOf(Math.round(tds * 0.05)).intValue();
+				break;
+			default:
+				tds = Long.valueOf(Math.round(tds * 0.06)).intValue();
+				break;
+			}
+		} else if (tongzhuangshui != null) {
+			switch (tongzhuangshui) {
+			case 1:
+				tds = Long.valueOf(Math.round(tds * 0.1)).intValue();
+				break;
+			case 2:
+				tds = Long.valueOf(Math.round(tds * 0.3)).intValue();
+				break;
+			case 3:
+				tds = Long.valueOf(Math.round(tds * 0.5)).intValue();
+				break;
+			default:
+				tds = Long.valueOf(Math.round(tds * 0.7)).intValue();
+				break;
+			}
+		} else if (baojie != null) {
+			tds = tds * baojie / 10;
+		}
+
 		WaterQPos waterQPos = new WaterQPos();
 		waterQPos.setPosName("完美世界大厦");
-		waterQPos.setWaterQ(RandomUtils.nextInt(1000));
-		waterQPos.setDesc(getWaterQDesc(waterQPos.getWaterQ()));
+		waterQPos.setWaterQ(tds);
+		waterQPos.setDesc(getWaterQDesc(tds));
+		waterQPos.setDegree(getWaterQDegree(tds));
 		return waterQPos;
 	}
 
@@ -53,7 +87,7 @@ public class WaterManager implements IWaterManager {
 		if (waterQ == null) {
 			waterQ = new WaterQ();
 			waterQ.setLati(lati);
-			WaterQPos localWaterQ = getWaterQ(lati, longi, yinshui, tongzhuangshui, baojie);
+			WaterQPos localWaterQ = getWaterQ(lati, longi, null,null,null);
 			waterQ.setLocalWaterQ(localWaterQ.getWaterQ());
 			waterQ.setLongi(longi);
 			waterQ.setModelId(1L);
@@ -62,15 +96,15 @@ public class WaterManager implements IWaterManager {
 			waterQ.setLocation(location);
 			waterQ.setModelLongi(longi);
 			waterQ.setModelWaterQ(localWaterQ.getWaterQ());
-			WaterQPos tongWaterQ = getWaterQ(lati, longi, yinshui, tongzhuangshui, baojie);
+			WaterQPos tongWaterQ = getWaterQ(lati, longi, null, tongzhuangshui, null);
 			waterQ.setTongWaterQ(tongWaterQ.getWaterQ());
 			waterQ.setUserId(userId);
 			waterQ.setTongzhuangshui(tongzhuangshui);
 			waterQ.setYinshui(yinshui);
 			waterQ.setYinshuiji(baojie);
-			WaterQPos yinshuijiWaterQ = getWaterQ(lati, longi, yinshui, tongzhuangshui, baojie);
+			WaterQPos yinshuijiWaterQ = getWaterQ(lati, longi, null, null, baojie);
 			waterQ.setYinshuijiWaterQ(yinshuijiWaterQ.getWaterQ());
-			WaterQPos yinshuiWaterQ = getWaterQ(lati, longi, yinshui, tongzhuangshui, baojie);
+			WaterQPos yinshuiWaterQ = getWaterQ(lati, longi, yinshui, null, null);
 			waterQ.setYinshuiWaterQ(yinshuiWaterQ.getWaterQ());
 			WaterQPos zongheWaterQ = getWaterQ(lati, longi, yinshui, tongzhuangshui, baojie);
 			waterQ.setZongheWaterQ(zongheWaterQ.getWaterQ());
@@ -83,22 +117,35 @@ public class WaterManager implements IWaterManager {
 		myWaterQ.setLoca(waterQ.getModelLoca() + " " + waterQ.getLocation());
 		myWaterQ.setWaterQ(waterQ.getZongheWaterQ());
 		myWaterQ.setWaterQDesc(getWaterQDesc(myWaterQ.getWaterQ()));
+		myWaterQ.setWaterQDegree(getWaterQDegree(myWaterQ.getWaterQ()));
 		myWaterQ.setLocalWaterQDesc(getWaterQDesc(waterQ.getLocalWaterQ()));
+		myWaterQ.setLocalWaterQDegree(getWaterQDegree(waterQ.getLocalWaterQ()));
 		myWaterQ.setYinshuiWaterQDesc(getWaterQDesc(waterQ.getYinshuiWaterQ()));
+		myWaterQ.setYinshuiWaterQDegree(getWaterQDegree(waterQ.getYinshuiWaterQ()));
 		myWaterQ.setTongWaterQDesc(getWaterQDesc(waterQ.getTongWaterQ()));
+		myWaterQ.setTongWaterQDegree(getWaterQDegree(waterQ.getTongWaterQ()));
 		myWaterQ.setYinshuijiWaterQDesc(getWaterQDesc(waterQ.getYinshuijiWaterQ()));
+		myWaterQ.setYinshuijiWaterQDegree(getWaterQDegree(waterQ.getYinshuijiWaterQ()));
 		return myWaterQ;
 	}
 
 	public String getWaterQDesc(Integer waterQ) {
 		if (waterQ <= 100) {
 			return "优";
-		} else if (waterQ <= 300) {
-			return "一般";
 		} else if (waterQ <= 500) {
-			return "差";
+			return "良";
 		} else {
-			return "恐怖";
+			return "差";
+		}
+	}
+
+	public String getWaterQDegree(Integer waterQ) {
+		if (waterQ <= 100) {
+			return "gr";
+		} else if (waterQ <= 500) {
+			return "blue";
+		} else {
+			return "or";
 		}
 	}
 
@@ -112,10 +159,15 @@ public class WaterManager implements IWaterManager {
 		myWaterQ.setLoca(waterQ.getModelLoca() + " " + waterQ.getLocation());
 		myWaterQ.setWaterQ(waterQ.getZongheWaterQ());
 		myWaterQ.setWaterQDesc(getWaterQDesc(myWaterQ.getWaterQ()));
+		myWaterQ.setWaterQDegree(getWaterQDegree(myWaterQ.getWaterQ()));
 		myWaterQ.setLocalWaterQDesc(getWaterQDesc(waterQ.getLocalWaterQ()));
+		myWaterQ.setLocalWaterQDegree(getWaterQDegree(waterQ.getLocalWaterQ()));
 		myWaterQ.setYinshuiWaterQDesc(getWaterQDesc(waterQ.getYinshuiWaterQ()));
+		myWaterQ.setYinshuiWaterQDegree(getWaterQDegree(waterQ.getYinshuiWaterQ()));
 		myWaterQ.setTongWaterQDesc(getWaterQDesc(waterQ.getTongWaterQ()));
+		myWaterQ.setTongWaterQDegree(getWaterQDegree(waterQ.getTongWaterQ()));
 		myWaterQ.setYinshuijiWaterQDesc(getWaterQDesc(waterQ.getYinshuijiWaterQ()));
+		myWaterQ.setYinshuijiWaterQDegree(getWaterQDegree(waterQ.getYinshuijiWaterQ()));
 		return myWaterQ;
 	}
 

@@ -23,6 +23,7 @@ public class WaterQPos extends BaseObject {
 	private static final long serialVersionUID = -8518364968569425160L;
 
 	private Integer waterQ;
+	private String degree;
 	private String desc;
 	private String posName;
 
@@ -31,6 +32,14 @@ public class WaterQPos extends BaseObject {
 	 */
 	public WaterQPos() {
 
+	}
+
+	public String getDegree() {
+		return degree;
+	}
+
+	public void setDegree(String degree) {
+		this.degree = degree;
 	}
 
 	/**

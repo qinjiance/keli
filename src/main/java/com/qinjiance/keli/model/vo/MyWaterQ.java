@@ -24,17 +24,62 @@ public class MyWaterQ extends BaseObject {
 
 	private String loca;
 	private Integer waterQ;
+	private String waterQDegree;
 	private String waterQDesc;
 	private String localWaterQDesc;
+	private String localWaterQDegree;
 	private String yinshuiWaterQDesc;
+	private String yinshuiWaterQDegree;
 	private String tongWaterQDesc;
+	private String tongWaterQDegree;
 	private String yinshuijiWaterQDesc;
+	private String yinshuijiWaterQDegree;
 
 	/**
 	 * 
 	 */
 	public MyWaterQ() {
 
+	}
+
+	public String getLocalWaterQDegree() {
+		return localWaterQDegree;
+	}
+
+	public void setLocalWaterQDegree(String localWaterQDegree) {
+		this.localWaterQDegree = localWaterQDegree;
+	}
+
+	public String getYinshuiWaterQDegree() {
+		return yinshuiWaterQDegree;
+	}
+
+	public void setYinshuiWaterQDegree(String yinshuiWaterQDegree) {
+		this.yinshuiWaterQDegree = yinshuiWaterQDegree;
+	}
+
+	public String getTongWaterQDegree() {
+		return tongWaterQDegree;
+	}
+
+	public void setTongWaterQDegree(String tongWaterQDegree) {
+		this.tongWaterQDegree = tongWaterQDegree;
+	}
+
+	public String getYinshuijiWaterQDegree() {
+		return yinshuijiWaterQDegree;
+	}
+
+	public void setYinshuijiWaterQDegree(String yinshuijiWaterQDegree) {
+		this.yinshuijiWaterQDegree = yinshuijiWaterQDegree;
+	}
+
+	public String getWaterQDegree() {
+		return waterQDegree;
+	}
+
+	public void setWaterQDegree(String waterQDegree) {
+		this.waterQDegree = waterQDegree;
 	}
 
 	/**

@@ -17,22 +17,24 @@
 	<%@include file="../common/header.jspf"%>
 	
 	<div>
-		<p class="num">${myWaterQ.waterQ}</p>
-		<p class="wq">${myWaterQ.waterQDesc}</p>
+		<div class="cir ${myWaterQ.waterQDegree}">
+			<p class="num">${myWaterQ.waterQ}</p>
+			<p class="wq">${myWaterQ.waterQDesc}</p>
+		</div>
 		<p class="sz">
-			<span class="wrap"><em class="name">本地水质</em><em class="desc">${myWaterQ.localWaterQDesc}</em></span>
-			<span class="wrap"><em class="name">饮水习惯</em><em class="desc">${myWaterQ.yinshuiWaterQDesc}</em></span>
-			<span class="wrap"><em class="name">桶装水</em><em class="desc">${myWaterQ.tongWaterQDesc}</em></span>
-			<span class="wrap"><em class="name">饮水机</em><em class="desc">${myWaterQ.yinshuijiWaterQDesc}</em></span>
+			<span class="wrap color${myWaterQ.localWaterQDegree}"><em class="name">本地水质</em><em class="desc">${myWaterQ.localWaterQDesc}</em></span>
+			<span class="wrap color${myWaterQ.yinshuiWaterQDegree}"><em class="name">饮水习惯</em><em class="desc">${myWaterQ.yinshuiWaterQDesc}</em></span>
+			<span class="wrap color${myWaterQ.tongWaterQDegree}"><em class="name">桶装水</em><em class="desc">${myWaterQ.tongWaterQDesc}</em></span>
+			<span class="wrap color${myWaterQ.yinshuijiWaterQDegree}"><em class="name">饮水机</em><em class="desc">${myWaterQ.yinshuijiWaterQDesc}</em></span>
 		</p>
 		<p class="loca">${myWaterQ.loca}</p>
 		<p class="op">
-			<span class="wp"><img src /><em class="de">大点</em></span>
-			<span class="wp"><img src /><em class="de">PK</em></span>
+			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/dd.png" /><em class="de">大点</em></span>
+			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/pk.png" /><em class="de">PK</em></span>
 		</p>
 		<p class="op">
-			<span class="wp"><img src /><em class="de">实验室</em></span>
-			<span class="wp"><img src /><em class="de">水质地图</em></span>
+			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/lab.png" /><em class="de">实验室</em></span>
+			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/map.png" /><em class="de">水质地图</em></span>
 		</p>
 	</div>	
 	

@@ -17,29 +17,39 @@
 	<%@include file="../common/header.jspf"%>
 	<div class="mainBg">
 		<div class="comp">
-			<p class="pt"><span class="lab">本地水质健康度</span><span class="color">颜色条</span></p>
-			<p class="num">${waterQPos.waterQ}</p>
-			<p class="wq">${waterQPos.desc}</p>
+			<p class="pt"><span class="lab">本地水质健康度</span><img class="color" src="${ctx}<fmt:message key="static.resources.host"/>/images/color.png" /></p>
+			<div class="cir ${waterQPos.degree}">
+				<p class="num">${waterQPos.waterQ}</p>
+				<p class="wq">${waterQPos.desc}</p>
+			</div>
 			<p class="pos">位置：${waterQPos.posName}</p>
 			<p class="inp"><input type="text" name="company" placeholder="请补充公司名称" /></p>
 			<p class="btn">请填写</p>
 		</div>	
 		
 		<div class="yinshui" style="display:none;">
-			<p class="pt"><span class="lab">饮水习惯健康度</span><span class="color">颜色条</span></p>
-			<p class="num">请完成下方题目</p>
-			<p class="wq"></p>
+			<p class="pt"><span class="lab">饮水习惯健康度</span><img class="color" src="${ctx}<fmt:message key="static.resources.host"/>/images/color.png" /></p>
+			<p class="ques"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/ques.gif" /></p>
+			<div class="cir ${waterQPos.degree}" style="display:none;">
+				<p class="num">请完成下方题目</p>
+				<p class="wq"></p>
+			</div>
 			<p class="pos">说说自己，办公室喝什么水？</p>
-			<p class="inp">
-				<span class="selYinshui" val="1">饮水机</span><span class="selYinshui" val="2">瓶装水</span><span class="selYinshui" val="3">自己茶壶烧</span>
-			</p>
+			<div class="inp">
+				<p class="selYinshui" val="1">饮水机</p>
+				<p class="selYinshui" val="2">瓶装水</p>
+				<p class="selYinshui" val="3">自己茶壶烧</p>
+			</div>
 			<p class="btn">请选择</p>
 		</div>	
 		
 		<div class="tongzhuangshui" style="display:none;">
-			<p class="pt"><span class="lab">桶装水健康度</span><span class="color">颜色条</span></p>
-			<p class="num">请完成下方题目</p>
-			<p class="wq"></p>
+			<p class="pt"><span class="lab">桶装水健康度</span><img class="color" src="${ctx}<fmt:message key="static.resources.host"/>/images/color.png" /></p>
+			<p class="ques"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/ques.gif" /></p>
+			<div class="cir ${waterQPos.degree}" style="display:none;">
+				<p class="num">请完成下方题目</p>
+				<p class="wq"></p>
+			</div>
 			<p class="pos">说说老板，一般买的都是什么桶装水？</p>
 			<div class="inp">
 				<p class="selTZS" val="1">老板有钱，喝的都是（屈臣氏，恒大）</p>
@@ -51,15 +61,18 @@
 		</div>	
 		
 		<div class="baojie" style="display:none;">
-			<p class="pt"><span class="lab">饮水机健康度</span><span class="color">颜色条</span></p>
-			<p class="num">请完成下方题目</p>
-			<p class="wq"></p>
+			<p class="pt"><span class="lab">饮水机健康度</span><img class="color" src="${ctx}<fmt:message key="static.resources.host"/>/images/color.png" /></p>
+			<p class="ques"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/ques.gif" /></p>
+			<div class="cir ${waterQPos.degree}" style="display:none;">
+				<p class="num">请完成下方题目</p>
+				<p class="wq"></p>
+			</div>
 			<p class="pos">说说保洁阿姨，多久护理一次饮水机？</p>
 			<div class="inp">
-				<p class="selBJ" val="1">三个月！阿姨特勤快</p>
-				<p class="selBJ" val="2">-_-，半年吧！</p>
-				<p class="selBJ" val="3">保洁阿姨是什么？</p>
-				<p class="selBJ" val="4">自己洗</p>
+				<p class="selBJ" val="3">三个月！阿姨特勤快</p>
+				<p class="selBJ" val="6">-_-，半年吧！</p>
+				<p class="selBJ" val="12">保洁阿姨是什么？</p>
+				<p class="selBJ" val="0">自己洗</p>
 			</div>
 			<p class="btn">请选择</p>
 		</div>
@@ -94,8 +107,12 @@
 				$.getJSON("${ctx}json/getWaterQ",{lati:'${lati}',longi:'${longi}',yinshui:$(this).attr('val')},function(ret){
 				    if(ret.code==0){
 				    	var data = ret.result;
-				    	$(that).closest(".inp").siblings(".num").html(data.waterQ);
-				    	$(that).closest(".inp").siblings(".wq").html(data.desc);
+				    	$(that).closest(".yinshui").find(".num").html(data.waterQ);
+				    	$(that).closest(".yinshui").find(".wq").html(data.desc);
+				    	$(that).closest(".yinshui").find(".cir").removeClass("gr").removeClass("blue").removeClass("or").addClass(data.degree);
+				    	$(that).closest(".yinshui").find(".ques").fadeOut(function(){
+				    		$(that).closest(".yinshui").find(".cir").fadeIn();
+				    	});
 				    }
 				 });
 				$(".inp .selYinshui").removeClass("on");
@@ -113,12 +130,16 @@
 
 			$(".inp .selTZS").click(function(){
 				var that = this;
-				$.getJSON("${ctx}json/getWaterQ",{lati:'${lati}',longi:'${longi}',yinshui:$(".inp .selYinshui.on").attr('val'),
+				$.getJSON("${ctx}json/getWaterQ",{lati:'${lati}',longi:'${longi}',
 					tongzhuangshui:$(this).attr('val')},function(ret){
 				    if(ret.code==0){
 				    	var data = ret.result;
-				    	$(that).closest(".inp").siblings(".num").html(data.waterQ);
-				    	$(that).closest(".inp").siblings(".wq").html(data.desc);
+				    	$(that).closest(".tongzhuangshui").find(".num").html(data.waterQ);
+				    	$(that).closest(".tongzhuangshui").find(".wq").html(data.desc);
+				    	$(that).closest(".tongzhuangshui").find(".cir").removeClass("gr").removeClass("blue").removeClass("or").addClass(data.degree);
+				    	$(that).closest(".tongzhuangshui").find(".ques").fadeOut(function(){
+				    		$(that).closest(".tongzhuangshui").find(".cir").fadeIn();
+				    	});
 				    }
 				 });
 				$(".inp .selTZS").removeClass("on");
@@ -137,13 +158,15 @@
 			$(".inp .selBJ").click(function(){
 				var that = this;
 				$.getJSON("${ctx}json/getWaterQ",{lati:'${lati}',longi:'${longi}',
-					yinshui:$(".inp .selYinshui.on").attr('val'),
-					tongzhuangshui:$(".inp .selTZS.on").attr('val'),
 					baojie:$(this).attr('val')},function(ret){
 				    if(ret.code==0){
 				    	var data = ret.result;
-				    	$(that).closest(".inp").siblings(".num").html(data.waterQ);
-				    	$(that).closest(".inp").siblings(".wq").html(data.desc);
+				    	$(that).closest(".baojie").find(".num").html(data.waterQ);
+				    	$(that).closest(".baojie").find(".wq").html(data.desc);
+				    	$(that).closest(".baojie").find(".cir").removeClass("gr").removeClass("blue").removeClass("or").addClass(data.degree);
+				    	$(that).closest(".baojie").find(".ques").fadeOut(function(){
+				    		$(that).closest(".baojie").find(".cir").fadeIn();
+				    	});
 				    }
 				 });
 				$(".inp .selBJ").removeClass("on");

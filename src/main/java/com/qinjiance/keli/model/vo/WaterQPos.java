@@ -3,6 +3,8 @@
  */
 package com.qinjiance.keli.model.vo;
 
+import com.qinjiance.keli.model.po.Community;
+
 import module.laohu.commons.model.BaseObject;
 
 /**
@@ -26,12 +28,21 @@ public class WaterQPos extends BaseObject {
 	private String degree;
 	private String desc;
 	private String posName;
+	private Community community;
 
 	/**
 	 * 
 	 */
 	public WaterQPos() {
 
+	}
+
+	public Community getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(Community community) {
+		this.community = community;
 	}
 
 	public String getDegree() {

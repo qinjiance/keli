@@ -1,0 +1,7 @@
+<%@ page language="java"
+import="com.qinjiance.keli.util.CookieUtil"
+contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<div class="header">
+	<p class="title"><img class="avatar" alt="" src="${avatarImg}">办公室水质健康度</p>
+</div>

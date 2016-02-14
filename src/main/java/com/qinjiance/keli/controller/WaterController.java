@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import module.laohu.commons.model.ResponseResult;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,11 +15,13 @@ import com.qinjiance.keli.annotation.NeedCookie;
 import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.constants.MessageCode;
 import com.qinjiance.keli.manager.IWaterManager;
-import com.qinjiance.keli.manager.IWeixinManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.model.vo.MyWaterQ;
+import com.qinjiance.keli.model.vo.WaterMap;
 import com.qinjiance.keli.model.vo.WaterQPos;
 import com.qinjiance.keli.util.CookieUtil;
+
+import module.laohu.commons.model.ResponseResult;
 
 /**
  * @author "Jiance Qin"
@@ -36,8 +36,6 @@ import com.qinjiance.keli.util.CookieUtil;
 @Controller
 public class WaterController extends BaseKeliController {
 
-	@Autowired
-	private IWeixinManager WeixinManager;
 	@Autowired
 	private IWaterManager waterManager;
 
@@ -121,5 +119,23 @@ public class WaterController extends BaseKeliController {
 		resultMap.putAll(model);
 		request.setAttribute(Constants.REQUEST_RETURN_KEY, resultMap);
 		return "water/myWaterQ";
+	}
+
+	@NeedCookie
+	@RequestMapping(value = "/waterMap")
+	public String waterMap(ModelMap model, HttpServletRequest request) {
+		// log记录结果用
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			WaterMap waterMap = waterManager.waterMap(CookieUtil.getUserIdFromCookie());
+			model.put("waterMap", waterMap);
+		} catch (ManagerException e) {
+			resultMap.put(e.getClass().getSimpleName(), e.getMessage());
+		}
+
+		// log记录结果用
+		resultMap.putAll(model);
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, resultMap);
+		return "water/waterMap";
 	}
 }

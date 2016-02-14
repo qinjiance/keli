@@ -1,0 +1,3 @@
+@charset "utf-8";
+.mapC{position: relative; width: 640px; height: 600px;}
+.marker-cuss{width: 50px;-moz-border-radius: 50%;/* Gecko browsers */-webkit-border-radius: 50%;/* Webkit browsers */border-radius:50%;/* W3C syntax */}

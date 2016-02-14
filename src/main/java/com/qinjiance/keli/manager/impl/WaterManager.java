@@ -3,16 +3,32 @@
  */
 package com.qinjiance.keli.manager.impl;
 
-import org.apache.commons.lang.math.RandomUtils;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoResults;
+import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.manager.IWaterManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.mapper.WaterQMapper;
+import com.qinjiance.keli.model.po.Community;
 import com.qinjiance.keli.model.po.WaterQ;
 import com.qinjiance.keli.model.vo.MyWaterQ;
+import com.qinjiance.keli.model.vo.WaterMap;
 import com.qinjiance.keli.model.vo.WaterQPos;
+
+import module.laohu.commons.util.HttpClientUtil;
+import module.laohu.commons.util.JsonUtils;
 
 /**
  * @author "Jiance Qin"
@@ -27,6 +43,13 @@ import com.qinjiance.keli.model.vo.WaterQPos;
 @Service
 public class WaterManager implements IWaterManager {
 
+	protected final static Logger logger = LoggerFactory.getLogger(WeixinManager.class);
+
+	@Value(value = "#{configProperties['gaode.api.key']}")
+	private String GAODE_API_KEY;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
 	@Autowired
 	private WaterQMapper waterQMapper;
 
@@ -40,7 +63,11 @@ public class WaterManager implements IWaterManager {
 	public WaterQPos getWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui, Integer baojie)
 			throws ManagerException {
 		// 监测点tds
-		Integer tds = RandomUtils.nextInt(1000);
+		Community community = getCommunity(lati, longi);
+		if (community == null) {
+			return null;
+		}
+		Integer tds = community.getTds();
 		if (yinshui != null) {
 			switch (yinshui) {
 			case 1:
@@ -73,8 +100,13 @@ public class WaterManager implements IWaterManager {
 		}
 
 		WaterQPos waterQPos = new WaterQPos();
-		waterQPos.setPosName("完美世界大厦");
+		String posName = getLbsLocationName(lati, longi);
+		if (StringUtils.isBlank(posName)) {
+			posName = community.getProvince() + community.getCity() + community.getArea() + community.getEstate();
+		}
+		waterQPos.setPosName(posName);
 		waterQPos.setWaterQ(tds);
+		waterQPos.setCommunity(community);
 		waterQPos.setDesc(getWaterQDesc(tds));
 		waterQPos.setDegree(getWaterQDegree(tds));
 		return waterQPos;
@@ -87,15 +119,15 @@ public class WaterManager implements IWaterManager {
 		if (waterQ == null) {
 			waterQ = new WaterQ();
 			waterQ.setLati(lati);
-			WaterQPos localWaterQ = getWaterQ(lati, longi, null,null,null);
+			WaterQPos localWaterQ = getWaterQ(lati, longi, null, null, null);
 			waterQ.setLocalWaterQ(localWaterQ.getWaterQ());
 			waterQ.setLongi(longi);
-			waterQ.setModelId(1L);
-			waterQ.setModelLati(lati);
-			waterQ.setModelLoca(location);
+			waterQ.setModelId(localWaterQ.getCommunity().getId());
+			waterQ.setModelLati(localWaterQ.getCommunity().getLat());
+			waterQ.setModelLoca(localWaterQ.getPosName());
 			waterQ.setLocation(location);
-			waterQ.setModelLongi(longi);
-			waterQ.setModelWaterQ(localWaterQ.getWaterQ());
+			waterQ.setModelLongi(localWaterQ.getCommunity().getLng());
+			waterQ.setModelWaterQ(localWaterQ.getCommunity().getTds());
 			WaterQPos tongWaterQ = getWaterQ(lati, longi, null, tongzhuangshui, null);
 			waterQ.setTongWaterQ(tongWaterQ.getWaterQ());
 			waterQ.setUserId(userId);
@@ -106,8 +138,8 @@ public class WaterManager implements IWaterManager {
 			waterQ.setYinshuijiWaterQ(yinshuijiWaterQ.getWaterQ());
 			WaterQPos yinshuiWaterQ = getWaterQ(lati, longi, yinshui, null, null);
 			waterQ.setYinshuiWaterQ(yinshuiWaterQ.getWaterQ());
-			WaterQPos zongheWaterQ = getWaterQ(lati, longi, yinshui, tongzhuangshui, baojie);
-			waterQ.setZongheWaterQ(zongheWaterQ.getWaterQ());
+			waterQ.setZongheWaterQ(waterQ.getLocalWaterQ() + waterQ.getTongWaterQ() + waterQ.getYinshuiWaterQ()
+					+ waterQ.getYinshuijiWaterQ());
 			Integer ret = waterQMapper.insert(waterQ);
 			if (ret == null || ret != 1) {
 				throw new ManagerException("保存数据失败，请重试");
@@ -169,6 +201,58 @@ public class WaterManager implements IWaterManager {
 		myWaterQ.setYinshuijiWaterQDesc(getWaterQDesc(waterQ.getYinshuijiWaterQ()));
 		myWaterQ.setYinshuijiWaterQDegree(getWaterQDegree(waterQ.getYinshuijiWaterQ()));
 		return myWaterQ;
+	}
+
+	@Override
+	public Community getCommunity(String lati, String longi) throws ManagerException {
+		String collectionName = "community";
+		GeoResults<Community> cc = mongoTemplate.geoNear(
+				NearQuery.near(Double.valueOf(longi), Double.valueOf(lati)).num(1), Community.class, collectionName);
+		if (cc == null || cc.getContent() == null || cc.getContent().isEmpty()) {
+			return mongoTemplate.findOne(new Query(), Community.class, collectionName);
+		}
+		return cc.getContent().get(0).getContent();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getLbsLocationName(String lati, String longi) throws ManagerException {
+		String url = "http://restapi.amap.com/v3/geocode/regeo?key=" + GAODE_API_KEY + "&location=" + longi + "," + lati
+				+ "&poitype=&radius=0&extensions=base&batch=false&roadlevel=1";
+		String response = null;
+		try {
+			response = HttpClientUtil.invokeGet(url, new HashMap<String, String>(), Constants.CHARSET,
+					Constants.HTTP_TIMEOUT, Constants.SO_TIMEOUT);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			return null;
+		}
+		if (StringUtils.isBlank(response)) {
+			logger.error("查询地理位置错误，请稍后再试");
+			return null;
+		}
+		Map<String, Object> result = JsonUtils.parse(response);
+		if (result == null || result.isEmpty() || !result.get("status").equals("1")
+				|| result.get("regeocode") == null) {
+			logger.error("查询地理位置失败，请稍后再试");
+			return null;
+		}
+		return (String) ((Map<String, Object>) result.get("regeocode")).get("formatted_address");
+	}
+
+	@Override
+	public WaterMap waterMap(Long userId) throws ManagerException {
+		WaterQ waterQ = waterQMapper.getByUserId(userId);
+		if (waterQ == null) {
+			return null;
+		}
+		WaterMap waterMap = new WaterMap();
+		waterMap.setLat(waterQ.getLati());
+		waterMap.setLng(waterQ.getLongi());
+		waterMap.setErCiLv(waterQ.getZongheWaterQ() / 10);
+		waterMap.setJieGouLv(waterQ.getZongheWaterQ() / 15);
+		waterMap.setXiJunLv(waterQ.getZongheWaterQ() / 20);
+		return waterMap;
 	}
 
 }

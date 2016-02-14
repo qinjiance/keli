@@ -14,7 +14,7 @@
 </head>
 <body>
 	<!-- header -->
-	<%@include file="../common/header.jspf"%>
+	<%@include file="../common/header1.jspf"%>
 	
 	<div>
 		<div class="cir ${myWaterQ.waterQDegree}">
@@ -34,7 +34,7 @@
 		</p>
 		<p class="op">
 			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/lab.png" /><em class="de">实验室</em></span>
-			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/map.png" /><em class="de">水质地图</em></span>
+			<a href="${ctx}waterMap" class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/map.png" /><em class="de">水质地图</em></a>
 		</p>
 	</div>	
 	

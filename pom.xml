@@ -321,34 +321,44 @@
 		</dependency>
 		<!-- axis2 -->
 		<dependency>
-		    <groupId>org.apache.axis2</groupId>
-		    <artifactId>axis2-kernel</artifactId>
-		    <version>${axis2}</version>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-kernel</artifactId>
+			<version>${axis2}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.axis2</groupId>
-		    <artifactId>axis2-adb</artifactId>
-		    <version>${axis2}</version>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-adb</artifactId>
+			<version>${axis2}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.axis2</groupId>
-		    <artifactId>axis2-adb-codegen</artifactId>
-		    <version>${axis2}</version>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-adb-codegen</artifactId>
+			<version>${axis2}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.axis2</groupId>
-		    <artifactId>axis2-transport-jms</artifactId>
-		    <version>${axis2}</version>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-transport-jms</artifactId>
+			<version>${axis2}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.axis2</groupId>
-		    <artifactId>axis2-transport-local</artifactId>
-		    <version>${axis2}</version>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-transport-local</artifactId>
+			<version>${axis2}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.axis2</groupId>
-		    <artifactId>axis2-transport-http</artifactId>
-		    <version>${axis2}</version>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-transport-http</artifactId>
+			<version>${axis2}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>2.11.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<version>1.3.0.RELEASE</version>
 		</dependency>
 	</dependencies>
 

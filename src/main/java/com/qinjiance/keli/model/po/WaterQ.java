@@ -5,9 +5,9 @@ package com.qinjiance.keli.model.po;
 
 import java.util.Date;
 
-import module.laohu.commons.model.BaseObject;
-
 import org.apache.ibatis.type.Alias;
+
+import module.laohu.commons.model.BaseObject;
 
 /**
  * @author "Jiance Qin"
@@ -35,7 +35,7 @@ public class WaterQ extends BaseObject {
 	private Integer yinshui;
 	private Integer tongzhuangshui;
 	private Integer yinshuiji;
-	private Long modelId;
+	private String modelId;
 	private Integer modelWaterQ;
 	private String modelLoca;
 	private String modelLati;
@@ -62,7 +62,8 @@ public class WaterQ extends BaseObject {
 	}
 
 	/**
-	 * @param location the location to set
+	 * @param location
+	 *            the location to set
 	 */
 	public void setLocation(String location) {
 		this.location = location;
@@ -176,7 +177,7 @@ public class WaterQ extends BaseObject {
 	/**
 	 * @return the modelId
 	 */
-	public Long getModelId() {
+	public String getModelId() {
 		return modelId;
 	}
 
@@ -184,7 +185,7 @@ public class WaterQ extends BaseObject {
 	 * @param modelId
 	 *            the modelId to set
 	 */
-	public void setModelId(Long modelId) {
+	public void setModelId(String modelId) {
 		this.modelId = modelId;
 	}
 

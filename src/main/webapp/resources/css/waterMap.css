@@ -1,3 +1,29 @@
 @charset "utf-8";
 .mapC{position: relative; width: 640px; height: 600px;}
 .marker-cuss{width: 50px;-moz-border-radius: 50%;/* Gecko browsers */-webkit-border-radius: 50%;/* Webkit browsers */border-radius:50%;/* W3C syntax */}
+.wen{text-align: left;}
+.lv{margin-top: 50px;color: rgb(203,203,203);font-size: 25px;margin-left: 60px;}
+.lv span{margin-left: 20px;}
+.lv img{width: 25px;vertical-align: middle;}
+.lv .tiao{height:18px;margin-left: 30px;display:inline-block;background-color:rgb(84,208,175);-moz-border-radius: 5px;/* Gecko browsers */-webkit-border-radius: 5px;/* Webkit browsers */border-radius:5px;/* W3C syntax */}
+.lv .tiao.jie{margin-left: 80px;}
+.libao{z-index: 100;position: absolute;left: 0;top: 0;}
+.libao .btn{margin-left: 20px;margin-top: 20px;}
+.libao .btn img{width: 80px;}
+.libao .btn p{color:#000;font-size: 28px;font-weight: bold;}
+.libao .libaolist{display: none;text-align: left;}
+.libao .libaolist .data{position: absolute;top: 0; left: 0;margin-left: 20px;margin-top: 20px;width: 300px;text-align: left;}
+.libao .libaolist .data p{color: #000;font-size: 28px;font-weight: bold;margin-top: 10px;}
+.libao .libaolist .lib{position: absolute;}
+.libao .libaolist .lib img{width: 50px;}
+.popget{color: rgb(203,203,203);font-size:28px;position: absolute;left: 0;top: 0;display: none;width: 640px; height: 600px;z-index: 500;background-color: rgba(0,0,0,0.5);}
+.popget .pop1{width: 450px; height: 300px;background-color: #fff;margin-top: 160px;margin-left: 100px;-moz-border-radius: 5px;/* Gecko browsers */-webkit-border-radius: 5px;/* Webkit browsers */border-radius:5px;/* W3C syntax */}
+.popget .pop1 img{width: 80px;float: left;margin-left: 50px;margin-top: 50px;}
+.popget .pop1 .tx1{float: left;margin-left: 20px;margin-top: 50px;}
+.popget .pop1 .tx2{float: left;margin-left: 20px;margin-top: 10px;}
+.popget .pop1 .okbtn{clear: both;margin-left: 90px;margin-top: 50px;width: 250px;padding: 10px;background-color: rgb(83,208,172);color: #fff;}
+.popc{color: rgb(203,203,203);font-size:28px;position: absolute;left: 0;top: 0;display: none;width: 640px; height: 600px;z-index: 500;background-color: rgba(0,0,0,0.5);}
+.popc .pop2{width: 450px; height: 300px;background-color: #fff;margin-top: 160px;margin-left: 100px;-moz-border-radius: 5px;/* Gecko browsers */-webkit-border-radius: 5px;/* Webkit browsers */border-radius:5px;/* W3C syntax */}
+.popc .pop2 .tx1{padding-top: 50px;}
+.popc .pop2 .tx2{margin-top: 10px;}
+.popc .pop2 .okbtn{margin-left: 90px;margin-top: 50px;width: 250px;padding: 10px;background-color: rgb(83,208,172);color: #fff;}

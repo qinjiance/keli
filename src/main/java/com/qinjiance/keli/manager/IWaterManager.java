@@ -8,6 +8,7 @@ import com.qinjiance.keli.model.po.Community;
 import com.qinjiance.keli.model.vo.MyWaterQ;
 import com.qinjiance.keli.model.vo.WaterMap;
 import com.qinjiance.keli.model.vo.WaterQPos;
+import com.qinjiance.keli.model.vo.XunbaoResult;
 
 /**
  * @author "Jiance Qin"
@@ -33,5 +34,7 @@ public interface IWaterManager {
 
 	public String getLbsLocationName(String lati, String longi) throws ManagerException;
 
-	public WaterMap waterMap(Long userIdFromCookie) throws ManagerException;
+	public WaterMap waterMap(Long userId) throws ManagerException;
+
+	public XunbaoResult xunbao(Long userId) throws ManagerException;
 }

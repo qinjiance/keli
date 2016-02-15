@@ -12,28 +12,41 @@ import module.laohu.commons.model.BaseObject;
  *
  * @desc
  */
-public class WaterMap extends BaseObject {
+public class XunbaoResult extends BaseObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1760447018572601058L;
 
-	private String lng;
-	private String lat;
-	private Integer jieGouLv;
-	private Integer erCiLv;
-	private Integer xiJunLv;
 	private Integer currTimes;
 	private Integer todayTotalTimes;
 	private Integer shuidi;
 	private Integer currParts;
 	private Integer totalParts;
+	private String libaoName;
+	private Integer libaoType;
 
 	/**
 	 * 
 	 */
-	public WaterMap() {
+	public XunbaoResult() {
+	}
+
+	public String getLibaoName() {
+		return libaoName;
+	}
+
+	public void setLibaoName(String libaoName) {
+		this.libaoName = libaoName;
+	}
+
+	public Integer getLibaoType() {
+		return libaoType;
+	}
+
+	public void setLibaoType(Integer libaoType) {
+		this.libaoType = libaoType;
 	}
 
 	public Integer getCurrTimes() {
@@ -74,46 +87,6 @@ public class WaterMap extends BaseObject {
 
 	public void setTotalParts(Integer totalParts) {
 		this.totalParts = totalParts;
-	}
-
-	public String getLng() {
-		return lng;
-	}
-
-	public void setLng(String lng) {
-		this.lng = lng;
-	}
-
-	public String getLat() {
-		return lat;
-	}
-
-	public void setLat(String lat) {
-		this.lat = lat;
-	}
-
-	public Integer getJieGouLv() {
-		return jieGouLv;
-	}
-
-	public void setJieGouLv(Integer jieGouLv) {
-		this.jieGouLv = jieGouLv;
-	}
-
-	public Integer getErCiLv() {
-		return erCiLv;
-	}
-
-	public void setErCiLv(Integer erCiLv) {
-		this.erCiLv = erCiLv;
-	}
-
-	public Integer getXiJunLv() {
-		return xiJunLv;
-	}
-
-	public void setXiJunLv(Integer xiJunLv) {
-		this.xiJunLv = xiJunLv;
 	}
 
 	public static long getSerialversionuid() {

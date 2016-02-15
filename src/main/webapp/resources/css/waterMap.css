@@ -18,12 +18,12 @@
 .libao .libaolist .lib img{width: 50px;}
 .popget{color: rgb(203,203,203);font-size:28px;position: absolute;left: 0;top: 0;display: none;width: 640px; height: 600px;z-index: 500;background-color: rgba(0,0,0,0.5);}
 .popget .pop1{width: 450px; height: 300px;background-color: #fff;margin-top: 160px;margin-left: 100px;-moz-border-radius: 5px;/* Gecko browsers */-webkit-border-radius: 5px;/* Webkit browsers */border-radius:5px;/* W3C syntax */}
-.popget .pop1 img{width: 80px;float: left;margin-left: 50px;margin-top: 50px;}
+.popget .pop1 img{width: 80px;float: left;margin-left: 50px;margin-top: 50px;margin-bottom: 50px;}
 .popget .pop1 .tx1{float: left;margin-left: 20px;margin-top: 50px;}
 .popget .pop1 .tx2{float: left;margin-left: 20px;margin-top: 10px;}
 .popget .pop1 .okbtn{clear: both;margin-left: 90px;margin-top: 50px;width: 250px;padding: 10px;background-color: rgb(83,208,172);color: #fff;}
 .popc{color: rgb(203,203,203);font-size:28px;position: absolute;left: 0;top: 0;display: none;width: 640px; height: 600px;z-index: 500;background-color: rgba(0,0,0,0.5);}
 .popc .pop2{width: 450px; height: 300px;background-color: #fff;margin-top: 160px;margin-left: 100px;-moz-border-radius: 5px;/* Gecko browsers */-webkit-border-radius: 5px;/* Webkit browsers */border-radius:5px;/* W3C syntax */}
 .popc .pop2 .tx1{padding-top: 50px;}
-.popc .pop2 .tx2{margin-top: 10px;}
+.popc .pop2 .tx2{margin-top: 10px;margin-bottom: 50px;}
 .popc .pop2 .okbtn{margin-left: 90px;margin-top: 50px;width: 250px;padding: 10px;background-color: rgb(83,208,172);color: #fff;}

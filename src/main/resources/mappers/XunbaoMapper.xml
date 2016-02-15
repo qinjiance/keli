@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qinjiance.keli.mapper.XunbaoMapper">
+    <insert id="insert" parameterType="xunbao">
+        INSERT INTO 
+    		xunbao (user_id, curr_times, today_total_times, last_modify_date, shuidi, part1, part2,
+    		part3, part4, part5, create_time, update_time) 
+    	VALUES 
+    		(#{userId}, #{currTimes}, #{todayTotalTimes}, #{lastModifyDate}, #{shuidi}, #{part1}, #{part2},
+    		#{part3}, #{part4}, #{part5}, now(), now())
+    </insert>
+</mapper>

@@ -3,10 +3,14 @@
  */
 package com.qinjiance.keli.manager.impl;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +25,14 @@ import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.manager.IWaterManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.mapper.WaterQMapper;
+import com.qinjiance.keli.mapper.XunbaoMapper;
 import com.qinjiance.keli.model.po.Community;
 import com.qinjiance.keli.model.po.WaterQ;
+import com.qinjiance.keli.model.po.Xunbao;
 import com.qinjiance.keli.model.vo.MyWaterQ;
 import com.qinjiance.keli.model.vo.WaterMap;
 import com.qinjiance.keli.model.vo.WaterQPos;
+import com.qinjiance.keli.model.vo.XunbaoResult;
 
 import module.laohu.commons.util.HttpClientUtil;
 import module.laohu.commons.util.JsonUtils;
@@ -48,10 +55,18 @@ public class WaterManager implements IWaterManager {
 	@Value(value = "#{configProperties['gaode.api.key']}")
 	private String GAODE_API_KEY;
 
+	private final static Integer INIT_TOTAL_TIMES = 3;
+	private final static Integer MAX_TOTAL_TIMES = 4;
+	private final static Integer TOTAL_PARTS = 5;
+
+	private final static String[] LIBAO_NAME = { "小水滴", "水杯", "滤芯", "电源", "底座", "机身" };
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	@Autowired
 	private WaterQMapper waterQMapper;
+	@Autowired
+	private XunbaoMapper xunbaoMapper;
 
 	/**
 	 * 
@@ -252,7 +267,157 @@ public class WaterManager implements IWaterManager {
 		waterMap.setErCiLv(waterQ.getZongheWaterQ() / 10);
 		waterMap.setJieGouLv(waterQ.getZongheWaterQ() / 15);
 		waterMap.setXiJunLv(waterQ.getZongheWaterQ() / 20);
+
+		Xunbao xunbao = xunbaoMapper.getByUserId(userId);
+		if (xunbao == null) {
+			xunbao = new Xunbao();
+			xunbao.setCurrTimes(3);
+			xunbao.setLastModifyDate(new Date());
+			xunbao.setPart1(0);
+			xunbao.setPart2(0);
+			xunbao.setPart3(0);
+			xunbao.setPart4(0);
+			xunbao.setPart5(0);
+			xunbao.setShuidi(0);
+			xunbao.setTodayTotalTimes(INIT_TOTAL_TIMES);
+			xunbao.setUserId(userId);
+			xunbaoMapper.insert(xunbao);
+		}
+		Integer currParts = 0;
+		if (xunbao.getPart1() > 0) {
+			currParts++;
+		}
+		if (xunbao.getPart2() > 0) {
+			currParts++;
+		}
+		if (xunbao.getPart3() > 0) {
+			currParts++;
+		}
+		if (xunbao.getPart4() > 0) {
+			currParts++;
+		}
+		if (xunbao.getPart5() > 0) {
+			currParts++;
+		}
+		waterMap.setCurrParts(currParts);
+		waterMap.setShuidi(xunbao.getShuidi());
+		Integer todayTotalTimes = xunbao.getTodayTotalTimes();
+		Integer currTimes = xunbao.getCurrTimes();
+		Date lastModTime = xunbao.getLastModifyDate();
+		lastModTime = DateUtils.truncate(lastModTime, Calendar.DATE);
+		if (lastModTime.before(DateUtils.truncate(new Date(), Calendar.DATE))) {
+			todayTotalTimes = INIT_TOTAL_TIMES;
+			currTimes = INIT_TOTAL_TIMES;
+		}
+		waterMap.setTodayTotalTimes(todayTotalTimes);
+		waterMap.setCurrTimes(currTimes);
+		waterMap.setTotalParts(TOTAL_PARTS);
 		return waterMap;
+	}
+
+	@Override
+	public XunbaoResult xunbao(Long userId) throws ManagerException {
+		Xunbao xunbao = xunbaoMapper.getByUserId(userId);
+		if (xunbao == null) {
+			xunbao = new Xunbao();
+			xunbao.setCurrTimes(3);
+			xunbao.setLastModifyDate(new Date());
+			xunbao.setPart1(0);
+			xunbao.setPart2(0);
+			xunbao.setPart3(0);
+			xunbao.setPart4(0);
+			xunbao.setPart5(0);
+			xunbao.setShuidi(0);
+			xunbao.setTodayTotalTimes(INIT_TOTAL_TIMES);
+			xunbao.setUserId(userId);
+			xunbaoMapper.insert(xunbao);
+		}
+		Integer shuidi = xunbao.getShuidi();
+		Integer currParts = 0;
+		if (xunbao.getPart1() > 0) {
+			currParts++;
+		}
+		if (xunbao.getPart2() > 0) {
+			currParts++;
+		}
+		if (xunbao.getPart3() > 0) {
+			currParts++;
+		}
+		if (xunbao.getPart4() > 0) {
+			currParts++;
+		}
+		if (xunbao.getPart5() > 0) {
+			currParts++;
+		}
+		Integer todayTotalTimes = xunbao.getTodayTotalTimes();
+		Integer currTimes = xunbao.getCurrTimes();
+		Date lastModTime = xunbao.getLastModifyDate();
+		lastModTime = DateUtils.truncate(lastModTime, Calendar.DATE);
+		if (lastModTime.before(DateUtils.truncate(new Date(), Calendar.DATE))) {
+			todayTotalTimes = INIT_TOTAL_TIMES;
+			currTimes = INIT_TOTAL_TIMES;
+		}
+		if (currTimes <= 0) {
+			throw new ManagerException("当天寻宝次数已用尽");
+		}
+		// 当天已获得宝物
+		Integer roll = 100;
+		Date lastGetDate = xunbao.getLastGetDate();
+		if (lastGetDate == null || DateUtils.truncate(lastGetDate, Calendar.DATE)
+				.before(DateUtils.truncate(new Date(), Calendar.DATE))) {
+			roll = new Random().nextInt(10);
+		}
+		Integer updateRet = null;
+		boolean getLibao = false;
+		if (roll == 0) {
+			updateRet = xunbaoMapper.updateShuidi(userId);
+			shuidi++;
+			getLibao = true;
+		} else if (roll == 1) {
+			updateRet = xunbaoMapper.updatePart1(userId);
+			if (xunbao.getPart1() == 0) {
+				currParts++;
+			}
+			getLibao = true;
+		} else if (roll == 2) {
+			updateRet = xunbaoMapper.updatePart2(userId);
+			if (xunbao.getPart2() == 0) {
+				currParts++;
+			}
+			getLibao = true;
+		} else if (roll == 3) {
+			updateRet = xunbaoMapper.updatePart3(userId);
+			if (xunbao.getPart3() == 0) {
+				currParts++;
+			}
+			getLibao = true;
+		} else if (roll == 4) {
+			updateRet = xunbaoMapper.updatePart4(userId);
+			if (xunbao.getPart4() == 0) {
+				currParts++;
+			}
+			getLibao = true;
+		} else if (roll == 5) {
+			// 永远不可以获得5 updateRet = xunbaoMapper.updatePart5(userId);
+			updateRet = xunbaoMapper.updateCurr(userId);
+		} else {
+			updateRet = xunbaoMapper.updateCurr(userId);
+		}
+		if (updateRet == null || updateRet != 1) {
+			throw new ManagerException("更新失败");
+		}
+
+		XunbaoResult result = new XunbaoResult();
+		result.setCurrParts(currParts);
+		result.setCurrTimes(currTimes - 1);
+		if (getLibao) {
+			result.setLibaoName(LIBAO_NAME[roll]);
+			result.setLibaoType(roll);
+		}
+		result.setShuidi(shuidi);
+		result.setTodayTotalTimes(todayTotalTimes);
+		result.setTotalParts(TOTAL_PARTS);
+		return result;
 	}
 
 }

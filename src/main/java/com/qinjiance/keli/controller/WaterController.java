@@ -19,6 +19,7 @@ import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.model.vo.MyWaterQ;
 import com.qinjiance.keli.model.vo.WaterMap;
 import com.qinjiance.keli.model.vo.WaterQPos;
+import com.qinjiance.keli.model.vo.XunbaoResult;
 import com.qinjiance.keli.util.CookieUtil;
 
 import module.laohu.commons.model.ResponseResult;
@@ -137,5 +138,28 @@ public class WaterController extends BaseKeliController {
 		resultMap.putAll(model);
 		request.setAttribute(Constants.REQUEST_RETURN_KEY, resultMap);
 		return "water/waterMap";
+	}
+
+	@NeedCookie
+	@RequestMapping(value = "/xunbao")
+	@ResponseBody
+	public ResponseResult<XunbaoResult> xunbao(HttpServletRequest request) {
+		ResponseResult<XunbaoResult> rr = new ResponseResult<XunbaoResult>();
+		rr.setCode(MessageCode.SERVICE_INTERNAL_ERROR.getCode());
+		try {
+			XunbaoResult xunbaoResult = waterManager.xunbao(CookieUtil.getUserIdFromCookie());
+			if (xunbaoResult.getLibaoType() == null) {
+				rr.setCode(MessageCode.SUCC_1.getCode());
+			} else {
+				rr.setCode(MessageCode.SUCC_0.getCode());
+			}
+			rr.setResult(xunbaoResult);
+		} catch (ManagerException e) {
+			rr.setMessage(e.getMessage());
+		}
+
+		// log记录结果用
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, rr);
+		return rr;
 	}
 }

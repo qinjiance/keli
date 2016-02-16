@@ -1,6 +1,7 @@
 package com.qinjiance.keli.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.qinjiance.keli.annotation.NeedCookie;
@@ -17,6 +19,9 @@ import com.qinjiance.keli.constants.MessageCode;
 import com.qinjiance.keli.manager.IWaterManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.model.vo.MyWaterQ;
+import com.qinjiance.keli.model.vo.MyWaterQSimple;
+import com.qinjiance.keli.model.vo.PkResult;
+import com.qinjiance.keli.model.vo.UserPosition;
 import com.qinjiance.keli.model.vo.WaterMap;
 import com.qinjiance.keli.model.vo.WaterQPos;
 import com.qinjiance.keli.model.vo.XunbaoResult;
@@ -154,6 +159,47 @@ public class WaterController extends BaseKeliController {
 				rr.setCode(MessageCode.SUCC_0.getCode());
 			}
 			rr.setResult(xunbaoResult);
+		} catch (ManagerException e) {
+			rr.setMessage(e.getMessage());
+		}
+
+		// log记录结果用
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, rr);
+		return rr;
+	}
+
+	@NeedCookie
+	@RequestMapping(value = "/pkAround")
+	public String pkAround(ModelMap model, HttpServletRequest request) {
+		// log记录结果用
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Long userId = CookieUtil.getUserIdFromCookie();
+			MyWaterQSimple myWaterQ = waterManager.getMyWaterQSimple(userId);
+			model.put("myWaterQ", myWaterQ);
+
+			List<UserPosition> userPositions = waterManager.getAroundUser(userId);
+			model.put("userPositions", userPositions);
+		} catch (ManagerException e) {
+			resultMap.put(e.getClass().getSimpleName(), e.getMessage());
+		}
+
+		// log记录结果用
+		resultMap.putAll(model);
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, resultMap);
+		return "water/pkAround";
+	}
+
+	@NeedCookie
+	@RequestMapping(value = "/pk")
+	@ResponseBody
+	public ResponseResult<PkResult> pk(@RequestParam Long pkUserId, HttpServletRequest request) {
+		ResponseResult<PkResult> rr = new ResponseResult<PkResult>();
+		rr.setCode(MessageCode.SERVICE_INTERNAL_ERROR.getCode());
+		try {
+			PkResult pkResult = waterManager.pk(CookieUtil.getUserIdFromCookie(), pkUserId);
+			rr.setCode(MessageCode.SUCC_0.getCode());
+			rr.setResult(pkResult);
 		} catch (ManagerException e) {
 			rr.setMessage(e.getMessage());
 		}

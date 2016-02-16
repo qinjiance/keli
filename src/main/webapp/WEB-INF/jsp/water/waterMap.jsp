@@ -38,7 +38,7 @@
 
 	<div class="wen">
 		<p class="lv"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/erci.png" /><span class="tx">二次污染率</span><span class="tiao" style="width:${(waterMap.erCiLv)*1.5}px;"></span><span class="perc">${waterMap.erCiLv}%</span></p>
-		<p class="lv"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/jiegou.png" /><span class="tx">结构率</span><span class="tiao jie" style="width:${(waterMap.jieGouLv)*1.5}px;"></span><span class="perc">${waterMap.jieGouLv}%</span></p>
+		<p class="lv"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/jiegou.png" /><span class="tx">结垢率</span><span class="tiao jie" style="width:${(waterMap.jieGouLv)*1.5}px;"></span><span class="perc">${waterMap.jieGouLv}%</span></p>
 		<p class="lv"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/xijun.png" /><span class="tx">变异细菌率</span><span class="tiao" style="width:${(waterMap.xiJunLv)*1.5}px;"></span><span class="perc">${waterMap.xiJunLv}%</span></p>
 	</div>
 

@@ -3,9 +3,14 @@
  */
 package com.qinjiance.keli.manager;
 
+import java.util.List;
+
 import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.model.po.Community;
 import com.qinjiance.keli.model.vo.MyWaterQ;
+import com.qinjiance.keli.model.vo.MyWaterQSimple;
+import com.qinjiance.keli.model.vo.PkResult;
+import com.qinjiance.keli.model.vo.UserPosition;
 import com.qinjiance.keli.model.vo.WaterMap;
 import com.qinjiance.keli.model.vo.WaterQPos;
 import com.qinjiance.keli.model.vo.XunbaoResult;
@@ -37,4 +42,10 @@ public interface IWaterManager {
 	public WaterMap waterMap(Long userId) throws ManagerException;
 
 	public XunbaoResult xunbao(Long userId) throws ManagerException;
+
+	public List<UserPosition> getAroundUser(Long userId) throws ManagerException;
+
+	public MyWaterQSimple getMyWaterQSimple(Long userId) throws ManagerException;
+
+	public PkResult pk(Long userId, Long pkUserId) throws ManagerException;
 }

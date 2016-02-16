@@ -12,4 +12,10 @@
     		#{scope}, #{nickname}, #{sex}, #{province}, #{country}, #{headimgurl}, #{privilege}, #{unionid},
     		now(), now())
     </insert>
+    <select id="getByUserIds" resultType="weixinThirdUser">
+    	select * from weixin_third_user where user_id in 
+            <foreach collection="list" item="userId" open="(" separator="," close=")">  
+                #{userId}  
+            </foreach>
+    </select>
 </mapper>

@@ -110,9 +110,9 @@
 				    	$(that).closest(".yinshui").find(".num").html(data.waterQ);
 				    	$(that).closest(".yinshui").find(".wq").html(data.desc);
 				    	$(that).closest(".yinshui").find(".cir").removeClass("gr").removeClass("blue").removeClass("or").addClass(data.degree);
-				    	$(that).closest(".yinshui").find(".ques").fadeOut(function(){
-				    		$(that).closest(".yinshui").find(".cir").fadeIn();
-				    	});
+				    	//$(that).closest(".yinshui").find(".ques").fadeOut(function(){
+				    	//	$(that).closest(".yinshui").find(".cir").fadeIn();
+				    	//});
 				    }
 				 });
 				$(".inp .selYinshui").removeClass("on");
@@ -137,9 +137,9 @@
 				    	$(that).closest(".tongzhuangshui").find(".num").html(data.waterQ);
 				    	$(that).closest(".tongzhuangshui").find(".wq").html(data.desc);
 				    	$(that).closest(".tongzhuangshui").find(".cir").removeClass("gr").removeClass("blue").removeClass("or").addClass(data.degree);
-				    	$(that).closest(".tongzhuangshui").find(".ques").fadeOut(function(){
-				    		$(that).closest(".tongzhuangshui").find(".cir").fadeIn();
-				    	});
+				    	//$(that).closest(".tongzhuangshui").find(".ques").fadeOut(function(){
+				    	//	$(that).closest(".tongzhuangshui").find(".cir").fadeIn();
+				    	//});
 				    }
 				 });
 				$(".inp .selTZS").removeClass("on");
@@ -164,9 +164,9 @@
 				    	$(that).closest(".baojie").find(".num").html(data.waterQ);
 				    	$(that).closest(".baojie").find(".wq").html(data.desc);
 				    	$(that).closest(".baojie").find(".cir").removeClass("gr").removeClass("blue").removeClass("or").addClass(data.degree);
-				    	$(that).closest(".baojie").find(".ques").fadeOut(function(){
-				    		$(that).closest(".baojie").find(".cir").fadeIn();
-				    	});
+				    	//$(that).closest(".baojie").find(".ques").fadeOut(function(){
+				    	//	$(that).closest(".baojie").find(".cir").fadeIn();
+				    	//});
 				    }
 				 });
 				$(".inp .selBJ").removeClass("on");

@@ -29,12 +29,12 @@
 		</p>
 		<p class="loca">${myWaterQ.loca}</p>
 		<p class="op">
-			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/dd.png" /><em class="de">大点</em></span>
-			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/pk.png" /><em class="de">PK</em></span>
+			<a href="${ctx}waterMap" class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/dd.png" /><em class="de">大点</em></a>
+			<a href="${ctx}pkAround" class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/pk.png" /><em class="de">PK</em></a>
 		</p>
 		<p class="op">
 			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/lab.png" /><em class="de">实验室</em></span>
-			<a href="${ctx}waterMap" class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/map.png" /><em class="de">水质地图</em></a>
+			<span class="wp"><img src="${ctx}<fmt:message key="static.resources.host"/>/images/map.png" /><em class="de">水质地图</em></span>
 		</p>
 	</div>	
 	

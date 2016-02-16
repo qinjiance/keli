@@ -3,9 +3,12 @@
  */
 package com.qinjiance.keli.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -25,14 +28,20 @@ import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.manager.IWaterManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.mapper.WaterQMapper;
+import com.qinjiance.keli.mapper.WeixinThirdUserMapper;
 import com.qinjiance.keli.mapper.XunbaoMapper;
 import com.qinjiance.keli.model.po.Community;
 import com.qinjiance.keli.model.po.WaterQ;
+import com.qinjiance.keli.model.po.WeixinThirdUser;
 import com.qinjiance.keli.model.po.Xunbao;
 import com.qinjiance.keli.model.vo.MyWaterQ;
+import com.qinjiance.keli.model.vo.MyWaterQSimple;
+import com.qinjiance.keli.model.vo.PkResult;
+import com.qinjiance.keli.model.vo.UserPosition;
 import com.qinjiance.keli.model.vo.WaterMap;
 import com.qinjiance.keli.model.vo.WaterQPos;
 import com.qinjiance.keli.model.vo.XunbaoResult;
+import com.qinjiance.keli.util.CookieUtil;
 
 import module.laohu.commons.util.HttpClientUtil;
 import module.laohu.commons.util.JsonUtils;
@@ -55,6 +64,10 @@ public class WaterManager implements IWaterManager {
 	@Value(value = "#{configProperties['gaode.api.key']}")
 	private String GAODE_API_KEY;
 
+	private static final double R = 6378137; // 地球半径
+	private static final double DEGREE = (24901 * 1609) / 360.0;
+	private static final double PI_DIV = Math.PI / 180.0;
+
 	private final static Integer INIT_TOTAL_TIMES = 3;
 	private final static Integer MAX_TOTAL_TIMES = 4;
 	private final static Integer TOTAL_PARTS = 5;
@@ -67,6 +80,8 @@ public class WaterManager implements IWaterManager {
 	private WaterQMapper waterQMapper;
 	@Autowired
 	private XunbaoMapper xunbaoMapper;
+	@Autowired
+	private WeixinThirdUserMapper weixinThirdUserMapper;
 
 	/**
 	 * 
@@ -367,41 +382,42 @@ public class WaterManager implements IWaterManager {
 				.before(DateUtils.truncate(new Date(), Calendar.DATE))) {
 			roll = new Random().nextInt(10);
 		}
+		currTimes--;
 		Integer updateRet = null;
 		boolean getLibao = false;
 		if (roll == 0) {
-			updateRet = xunbaoMapper.updateShuidi(userId);
+			updateRet = xunbaoMapper.updateShuidi(userId, currTimes, todayTotalTimes);
 			shuidi++;
 			getLibao = true;
 		} else if (roll == 1) {
-			updateRet = xunbaoMapper.updatePart1(userId);
+			updateRet = xunbaoMapper.updatePart1(userId, currTimes, todayTotalTimes);
 			if (xunbao.getPart1() == 0) {
 				currParts++;
 			}
 			getLibao = true;
 		} else if (roll == 2) {
-			updateRet = xunbaoMapper.updatePart2(userId);
+			updateRet = xunbaoMapper.updatePart2(userId, currTimes, todayTotalTimes);
 			if (xunbao.getPart2() == 0) {
 				currParts++;
 			}
 			getLibao = true;
 		} else if (roll == 3) {
-			updateRet = xunbaoMapper.updatePart3(userId);
+			updateRet = xunbaoMapper.updatePart3(userId, currTimes, todayTotalTimes);
 			if (xunbao.getPart3() == 0) {
 				currParts++;
 			}
 			getLibao = true;
 		} else if (roll == 4) {
-			updateRet = xunbaoMapper.updatePart4(userId);
+			updateRet = xunbaoMapper.updatePart4(userId, currTimes, todayTotalTimes);
 			if (xunbao.getPart4() == 0) {
 				currParts++;
 			}
 			getLibao = true;
 		} else if (roll == 5) {
 			// 永远不可以获得5 updateRet = xunbaoMapper.updatePart5(userId);
-			updateRet = xunbaoMapper.updateCurr(userId);
+			updateRet = xunbaoMapper.updateCurr(userId, currTimes, todayTotalTimes);
 		} else {
-			updateRet = xunbaoMapper.updateCurr(userId);
+			updateRet = xunbaoMapper.updateCurr(userId, currTimes, todayTotalTimes);
 		}
 		if (updateRet == null || updateRet != 1) {
 			throw new ManagerException("更新失败");
@@ -409,7 +425,7 @@ public class WaterManager implements IWaterManager {
 
 		XunbaoResult result = new XunbaoResult();
 		result.setCurrParts(currParts);
-		result.setCurrTimes(currTimes - 1);
+		result.setCurrTimes(currTimes);
 		if (getLibao) {
 			result.setLibaoName(LIBAO_NAME[roll]);
 			result.setLibaoType(roll);
@@ -420,4 +436,167 @@ public class WaterManager implements IWaterManager {
 		return result;
 	}
 
+	/**
+	 * 计算地球上任意两点(经纬度)距离
+	 * 
+	 * @param long1
+	 *            第一点经度
+	 * @param lat1
+	 *            第一点纬度
+	 * @param long2
+	 *            第二点经度
+	 * @param lat2
+	 *            第二点纬度
+	 * @return 返回距离 单位：米
+	 */
+	protected int getDistance(double long1, double lat1, double long2, double lat2) {
+		double a, b;
+		lat1 = lat1 * PI_DIV;
+		lat2 = lat2 * PI_DIV;
+		a = lat1 - lat2;
+		b = (long1 - long2) * PI_DIV;
+		double sa2, sb2;
+		sa2 = Math.sin(a / 2.0);
+		sb2 = Math.sin(b / 2.0);
+		return (int) (2 * R * Math.asin(Math.sqrt(sa2 * sa2 + Math.cos(lat1) * Math.cos(lat2) * sb2 * sb2)));
+	}
+
+	/**
+	 * 计算地球上任意两点(经纬度)距离
+	 * 
+	 * @param long1
+	 *            第一点经度
+	 * @param lat1
+	 *            第一点纬度
+	 * @param long2
+	 *            第二点经度
+	 * @param lat2
+	 *            第二点纬度
+	 * @return 返回距离 单位：米
+	 */
+	protected int getDistance(double long1, double lat1, Long userId) {
+		WaterQ waterQ = waterQMapper.getByUserId(userId);
+		if (waterQ != null) {
+			return this.getDistance(long1, lat1, Double.valueOf(waterQ.getLongi()), Double.valueOf(waterQ.getLati()));
+		}
+		return 0;
+	}
+
+	/**
+	 * 生成以中心点为中心的四方形经纬度
+	 * 
+	 * @param lon
+	 *            精度
+	 * @param lat
+	 *            纬度
+	 * @param raidus
+	 *            半径（以米为单位）
+	 * @return
+	 */
+	protected double[] getAround(double lon, double lat, int raidus) {
+
+		Double latitude = lat;
+		Double longitude = lon;
+
+		double raidusMile = raidus;
+
+		Double dpmLat = 1 / DEGREE;
+		Double radiusLat = dpmLat * raidusMile;
+		Double minLat = latitude - radiusLat;
+		Double maxLat = latitude + radiusLat;
+
+		Double mpdLng = DEGREE * Math.cos(latitude * PI_DIV);
+		Double dpmLng = 1 / mpdLng;
+		Double radiusLng = dpmLng * raidusMile;
+		Double minLng = longitude - radiusLng;
+		Double maxLng = longitude + radiusLng;
+		return new double[] { minLat, minLng, maxLat, maxLng };
+	}
+
+	@Override
+	public List<UserPosition> getAroundUser(Long userId) throws ManagerException {
+		WaterQ waterQ = waterQMapper.getByUserId(userId);
+		double[] roundParams = this.getAround(Double.valueOf(waterQ.getLongi()), Double.valueOf(waterQ.getLati()),
+				100000);
+		List<WaterQ> arounds = waterQMapper.getArounds(userId, roundParams[3], roundParams[1], roundParams[2],
+				roundParams[0]);
+		if (arounds == null || arounds.isEmpty()) {
+			return null;
+		}
+		List<UserPosition> positionList = new ArrayList<UserPosition>();
+		UserPosition position = null;
+		for (WaterQ item : arounds) {
+			position = new UserPosition();
+			position.setLocation(item.getLocation());
+			position.setUserId(item.getUserId());
+			position.setZongheTds(waterQ.getZongheWaterQ());
+			position.setDistance(getDistance(Double.valueOf(waterQ.getLongi()), Double.valueOf(waterQ.getLati()),
+					Double.valueOf(item.getLongi()), Double.valueOf(item.getLati())));
+			positionList.add(position);
+		}
+		Collections.sort(positionList);
+		List<Long> userIds = new ArrayList<Long>();
+		int i = 0;
+		List<UserPosition> resultList = new ArrayList<UserPosition>();
+		for (UserPosition item : positionList) {
+			i++;
+			resultList.add(item);
+			userIds.add(item.getUserId());
+			if (i == 100) {
+				break;
+			}
+		}
+		List<WeixinThirdUser> thirdUsers = weixinThirdUserMapper.getByUserIds(userIds);
+		Map<Long, WeixinThirdUser> tMap = new HashMap<Long, WeixinThirdUser>();
+		for (WeixinThirdUser third : thirdUsers) {
+			tMap.put(third.getUserId(), third);
+		}
+		for (UserPosition up : resultList) {
+			up.setHeadImg(tMap.get(up.getUserId()).getHeadimgurl());
+		}
+		return resultList;
+	}
+
+	@Override
+	public MyWaterQSimple getMyWaterQSimple(Long userId) throws ManagerException {
+		WaterQ waterQ = waterQMapper.getByUserId(userId);
+		if (waterQ == null) {
+			return null;
+		}
+		MyWaterQSimple myWaterQ = new MyWaterQSimple();
+		myWaterQ.setLoca(waterQ.getLocation());
+		myWaterQ.setWaterQ(waterQ.getZongheWaterQ());
+		return myWaterQ;
+	}
+
+	@Override
+	public PkResult pk(Long userId, Long pkUserId) throws ManagerException {
+		WaterQ myWaterQ = waterQMapper.getByUserId(userId);
+		WaterQ otherWaterQ = waterQMapper.getByUserId(pkUserId);
+		WeixinThirdUser thirdUser = weixinThirdUserMapper.getByUserId(pkUserId);
+		if (otherWaterQ == null || thirdUser == null) {
+			throw new ManagerException("pk用户不存在");
+		}
+		PkResult pkResult = new PkResult();
+		pkResult.setMyHeadImg(CookieUtil.getAvatarFromCookie());
+		pkResult.setMyZongheTds(myWaterQ.getZongheWaterQ());
+		pkResult.setMyErciLv(myWaterQ.getZongheWaterQ() / 10);
+		pkResult.setMyJiegouLv(myWaterQ.getZongheWaterQ() / 15);
+		pkResult.setMyXijunLv(myWaterQ.getZongheWaterQ() / 20);
+
+		pkResult.setOtherHeadImg(thirdUser.getHeadimgurl());
+		pkResult.setOtherZongheTds(otherWaterQ.getZongheWaterQ());
+		pkResult.setOtherErciLv(otherWaterQ.getZongheWaterQ() / 10);
+		pkResult.setOtherJiegouLv(otherWaterQ.getZongheWaterQ() / 15);
+		pkResult.setOtherXijunLv(otherWaterQ.getZongheWaterQ() / 20);
+
+		if (pkResult.getMyZongheTds() < pkResult.getOtherZongheTds()) {
+			pkResult.setPkRet("胜");
+		} else if (pkResult.getMyZongheTds() > pkResult.getOtherZongheTds()) {
+			pkResult.setPkRet("败");
+		} else {
+			pkResult.setPkRet("平");
+		}
+		return pkResult;
+	}
 }

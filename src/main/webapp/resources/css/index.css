@@ -1,6 +1,6 @@
 @charset "utf-8";
 .landingImg{margin-top: 150px;margin-left: 200px;}
-.landingImg img{width:450px;}
+.landingImg img{width:400px;}
 .landingTit{color:rgb(176,176,176);margin-top: 0;font-size: 40px;}
 .landingA{font-size: 40px;margin-left:80px;text-decoration:none;display:block;color:#ffe;padding:10px 40px;margin-top: 250px; width: 400px; background:url(../images/btn1.png) no-repeat 0 0;-moz-border-radius: 2px;-webkit-border-radius: 2px;border-radius:2px;}
 .landingA:ACTIVE {}

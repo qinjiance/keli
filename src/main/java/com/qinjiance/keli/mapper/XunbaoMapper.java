@@ -23,26 +23,33 @@ public interface XunbaoMapper {
 
 	public Integer insert(Xunbao xunbao);
 
-	@Update("update xunbao set shuidi = shuidi+1, curr_times = curr_times-1, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
-	public Integer updateShuidi(@Param("userId") Long userId);
+	@Update("update xunbao set shuidi = shuidi+1, curr_times = #{currTimes}, today_total_times = #{todayTotalTimes}, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
+	public Integer updateShuidi(@Param("userId") Long userId, @Param("currTimes") Integer currTimes,
+			@Param("todayTotalTimes") Integer todayTotalTimes);
 
-	@Update("update xunbao set part1 = part1+1, curr_times = curr_times-1, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
-	public Integer updatePart1(@Param("userId") Long userId);
+	@Update("update xunbao set part1 = part1+1, curr_times = #{currTimes}, today_total_times = #{todayTotalTimes}, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
+	public Integer updatePart1(@Param("userId") Long userId, @Param("currTimes") Integer currTimes,
+			@Param("todayTotalTimes") Integer todayTotalTimes);
 
-	@Update("update xunbao set part2 = part2+1, curr_times = curr_times-1, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
-	public Integer updatePart2(@Param("userId") Long userId);
+	@Update("update xunbao set part2 = part2+1, curr_times = #{currTimes}, today_total_times = #{todayTotalTimes}, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
+	public Integer updatePart2(@Param("userId") Long userId, @Param("currTimes") Integer currTimes,
+			@Param("todayTotalTimes") Integer todayTotalTimes);
 
-	@Update("update xunbao set part3 = part3+1, curr_times = curr_times-1, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
-	public Integer updatePart3(@Param("userId") Long userId);
+	@Update("update xunbao set part3 = part3+1, curr_times = #{currTimes}, today_total_times = #{todayTotalTimes}, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
+	public Integer updatePart3(@Param("userId") Long userId, @Param("currTimes") Integer currTimes,
+			@Param("todayTotalTimes") Integer todayTotalTimes);
 
-	@Update("update xunbao set part4 = part4+1, curr_times = curr_times-1, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
-	public Integer updatePart4(@Param("userId") Long userId);
+	@Update("update xunbao set part4 = part4+1, curr_times = #{currTimes}, today_total_times = #{todayTotalTimes}, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
+	public Integer updatePart4(@Param("userId") Long userId, @Param("currTimes") Integer currTimes,
+			@Param("todayTotalTimes") Integer todayTotalTimes);
 
-	@Update("update xunbao set part5 = part5+1, curr_times = curr_times-1, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
-	public Integer updatePart5(@Param("userId") Long userId);
+	@Update("update xunbao set part5 = part5+1, curr_times = #{currTimes}, today_total_times = #{todayTotalTimes}, last_get_date = now(), last_modify_date = now() where user_id = #{userId}")
+	public Integer updatePart5(@Param("userId") Long userId, @Param("currTimes") Integer currTimes,
+			@Param("todayTotalTimes") Integer todayTotalTimes);
 
-	@Update("update xunbao set curr_times = curr_times-1, last_modify_date = now() where user_id = #{userId}")
-	public Integer updateCurr(@Param("userId") Long userId);
+	@Update("update xunbao set curr_times = #{currTimes}, today_total_times = #{todayTotalTimes}, last_modify_date = now() where user_id = #{userId}")
+	public Integer updateCurr(@Param("userId") Long userId, @Param("currTimes") Integer currTimes,
+			@Param("todayTotalTimes") Integer todayTotalTimes);
 
 	@Select("select * from xunbao where user_id = #{userId}")
 	public Xunbao getByUserId(@Param("userId") Long userId);

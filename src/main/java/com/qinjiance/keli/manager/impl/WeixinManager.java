@@ -49,9 +49,9 @@ public class WeixinManager implements IWeixinManager {
 	protected final static Logger logger = LoggerFactory.getLogger(WeixinManager.class);
 
 	@Value(value = "#{configProperties['weixin_public_app_id']}")
-	private final static String APP_ID = "";
+	private String APP_ID = "";
 	@Value(value = "#{configProperties['weixin_public_app_secret']}")
-	private final static String APP_SECRET = "";
+	private String APP_SECRET = "";
 	private final static String PUBLIC_OAUTH_URL = "https://open.weixin.qq.com/connect/oauth2/authorize";
 	private final static String PUBLIC_OAUTH_USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo";
 	private final static String PUBLIC_OAUTH_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";

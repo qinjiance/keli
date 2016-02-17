@@ -49,7 +49,7 @@ public class EhCacheManager implements IEhCacheManager {
 	 * 
 	 */
 	public static enum CacheType {
-		DAYLY("daylyCache"), MIN1("min1Cache"), MIN15("min15Cache");
+		DAYLY("daylyCache"), MIN1("min1Cache"), MIN15("min15Cache"), HOUR1("hour1Cache");
 		private CacheType(String cacheName) {
 
 			this.cacheName = cacheName;
@@ -72,6 +72,7 @@ public class EhCacheManager implements IEhCacheManager {
 	private Cache dalyCache;
 	private Cache min15Cache;
 	private Cache min1Cache;
+	private Cache hour1Cache;
 
 	/**
 	 * @throws CacheException
@@ -90,7 +91,7 @@ public class EhCacheManager implements IEhCacheManager {
 		dalyCache = EhCacheUtil.getCache(cacheManager, CacheType.DAYLY.getCacheName());
 		min15Cache = EhCacheUtil.getCache(cacheManager, CacheType.MIN15.getCacheName());
 		min1Cache = EhCacheUtil.getCache(cacheManager, CacheType.MIN1.getCacheName());
-
+		hour1Cache = EhCacheUtil.getCache(cacheManager, CacheType.HOUR1.getCacheName());
 	}
 
 	/*
@@ -113,6 +114,8 @@ public class EhCacheManager implements IEhCacheManager {
 			return min1Cache;
 		case MIN15:
 			return min15Cache;
+		case HOUR1:
+			return hour1Cache;
 		default:
 			return null;
 		}
@@ -138,6 +141,8 @@ public class EhCacheManager implements IEhCacheManager {
 			return (Ehcache) min1Cache.getNativeCache();
 		case MIN15:
 			return (Ehcache) min15Cache.getNativeCache();
+		case HOUR1:
+			return (Ehcache) hour1Cache.getNativeCache();
 		default:
 			return null;
 		}
@@ -146,9 +151,8 @@ public class EhCacheManager implements IEhCacheManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.biancloud.biancloudweb.manager.EhCacheManager#getFromCache(com.biancloud
-	 * .biancloudweb.manager.impl.EhCacheManagerImpl.CacheType,
+	 * @see com.biancloud.biancloudweb.manager.EhCacheManager#getFromCache(com.
+	 * biancloud .biancloudweb.manager.impl.EhCacheManagerImpl.CacheType,
 	 * java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
@@ -169,9 +173,8 @@ public class EhCacheManager implements IEhCacheManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.biancloud.biancloudweb.manager.EhCacheManager#putToCache(com.biancloud
-	 * .biancloudweb.manager.impl.EhCacheManagerImpl.CacheType,
+	 * @see com.biancloud.biancloudweb.manager.EhCacheManager#putToCache(com.
+	 * biancloud .biancloudweb.manager.impl.EhCacheManagerImpl.CacheType,
 	 * java.lang.Object, java.lang.Object)
 	 */
 	@Override

@@ -13,11 +13,6 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import module.laohu.commons.model.ResponseResult;
-import module.laohu.commons.util.CheckStyleUtil;
-import module.laohu.commons.util.JsonUtils;
-import module.laohu.commons.util.WebUtils;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +26,11 @@ import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.constants.MessageCode;
 import com.qinjiance.keli.util.CookieUtil;
 import com.qinjiance.keli.util.ReflectUtil;
+
+import module.laohu.commons.model.ResponseResult;
+import module.laohu.commons.util.CheckStyleUtil;
+import module.laohu.commons.util.JsonUtils;
+import module.laohu.commons.util.WebUtils;
 
 /**
  * 用户web登录检查拦截器
@@ -55,9 +55,8 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.springframework.web.servlet.HandlerInterceptor#postHandle(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+	 * @see org.springframework.web.servlet.HandlerInterceptor#postHandle(javax.
+	 * servlet .http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
 	 * java.lang.Object, org.springframework.web.servlet.ModelAndView)
 	 */
 	@Override
@@ -70,17 +69,18 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.springframework.web.servlet.HandlerInterceptor#preHandle(javax.servlet
-	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
+	 * @see org.springframework.web.servlet.HandlerInterceptor#preHandle(javax.
+	 * servlet .http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
 	 * java.lang.Object)
 	 */
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws Exception {
 
 		// 业务处理开始时间
 		long requestStartTime = System.currentTimeMillis();
 		request.setAttribute(Constants.REQUEST_START_TIME_KEY, requestStartTime);
+		request.setAttribute("requestAddr", getRequestLocation(request, false));
 
 		String requestPath = request.getRequestURI();
 		// 浏览器登录态验证.
@@ -91,8 +91,8 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
 				return true;
 			} else {
 				// 请求及响应日志
-				request.setAttribute(Constants.REQUEST_RETURN_KEY, "Web request path: " + requestPath
-						+ ", invalid login cookie, redirect to login.");
+				request.setAttribute(Constants.REQUEST_RETURN_KEY,
+						"Web request path: " + requestPath + ", invalid login cookie, redirect to login.");
 				requestHandleLog(request, handler);
 
 				// 无效，则跳转用户登录页面.
@@ -121,8 +121,8 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
 				}
 
 				// 请求及响应日志
-				request.setAttribute(Constants.REQUEST_RETURN_KEY, "Web request path: " + requestPath
-						+ ", valid cookie, redirect to: " + location);
+				request.setAttribute(Constants.REQUEST_RETURN_KEY,
+						"Web request path: " + requestPath + ", valid cookie, redirect to: " + location);
 				requestHandleLog(request, handler);
 
 				redirect(location, request, response);

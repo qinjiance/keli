@@ -27,6 +27,7 @@ import com.qinjiance.keli.model.vo.WaterQPos;
 import com.qinjiance.keli.model.vo.XunbaoResult;
 import com.qinjiance.keli.util.CookieUtil;
 
+import module.laohu.commons.model.ResponseCode;
 import module.laohu.commons.model.ResponseResult;
 
 /**
@@ -207,5 +208,25 @@ public class WaterController extends BaseKeliController {
 		// log记录结果用
 		request.setAttribute(Constants.REQUEST_RETURN_KEY, rr);
 		return rr;
+	}
+
+	@NeedCookie
+	@RequestMapping(value = "/finishedShare")
+	@ResponseBody
+	public ResponseCode finishedShare(@RequestParam String signature, HttpServletRequest request) {
+		ResponseCode rc = new ResponseCode();
+		rc.setCode(MessageCode.SERVICE_INTERNAL_ERROR.getCode());
+		try {
+			boolean ret = waterManager.finishedShare(CookieUtil.getUserIdFromCookie(), signature);
+			if (ret) {
+				rc.setCode(MessageCode.SUCC_0.getCode());
+			}
+		} catch (ManagerException e) {
+			rc.setMessage(e.getMessage());
+		}
+
+		// log记录结果用
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, rc);
+		return rc;
 	}
 }

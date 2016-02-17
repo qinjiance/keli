@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.qinjiance.keli.constants.Constants;
 import com.qinjiance.keli.manager.IWaterManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
+import com.qinjiance.keli.manager.impl.EhCacheManager.CacheType;
 import com.qinjiance.keli.mapper.WaterQMapper;
 import com.qinjiance.keli.mapper.WeixinThirdUserMapper;
 import com.qinjiance.keli.mapper.XunbaoMapper;
@@ -82,6 +83,8 @@ public class WaterManager implements IWaterManager {
 	private XunbaoMapper xunbaoMapper;
 	@Autowired
 	private WeixinThirdUserMapper weixinThirdUserMapper;
+	@Autowired
+	private EhCacheManager ehCacheManager;
 
 	/**
 	 * 
@@ -151,6 +154,7 @@ public class WaterManager implements IWaterManager {
 			waterQ.setLati(lati);
 			WaterQPos localWaterQ = getWaterQ(lati, longi, null, null, null);
 			waterQ.setLocalWaterQ(localWaterQ.getWaterQ());
+			waterQ.setCity(getLbsCityName(lati, longi));
 			waterQ.setLongi(longi);
 			waterQ.setModelId(localWaterQ.getCommunity().getId());
 			waterQ.setModelLati(localWaterQ.getCommunity().getLat());
@@ -270,6 +274,38 @@ public class WaterManager implements IWaterManager {
 		return (String) ((Map<String, Object>) result.get("regeocode")).get("formatted_address");
 	}
 
+	@SuppressWarnings("unchecked")
+	protected String getLbsCityName(String lati, String longi) throws ManagerException {
+		String url = "http://restapi.amap.com/v3/geocode/regeo?key=" + GAODE_API_KEY + "&location=" + longi + "," + lati
+				+ "&poitype=&radius=0&extensions=base&batch=false&roadlevel=1";
+		String response = null;
+		try {
+			response = HttpClientUtil.invokeGet(url, new HashMap<String, String>(), Constants.CHARSET,
+					Constants.HTTP_TIMEOUT, Constants.SO_TIMEOUT);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			return null;
+		}
+		if (StringUtils.isBlank(response)) {
+			logger.error("查询地理位置错误，请稍后再试");
+			return null;
+		}
+		Map<String, Object> result = JsonUtils.parse(response);
+		if (result == null || result.isEmpty() || !result.get("status").equals("1")
+				|| result.get("regeocode") == null) {
+			logger.error("查询地理位置失败，请稍后再试");
+			return null;
+		}
+		Object city = ((Map<String, Object>) ((Map<String, Object>) result.get("regeocode")).get("addressComponent"))
+				.get("city");
+		if (city != null && city instanceof String) {
+			return (String) city;
+		} else {
+			return (String) ((Map<String, Object>) ((Map<String, Object>) result.get("regeocode"))
+					.get("addressComponent")).get("province");
+		}
+	}
+
 	@Override
 	public WaterMap waterMap(Long userId) throws ManagerException {
 		WaterQ waterQ = waterQMapper.getByUserId(userId);
@@ -335,7 +371,7 @@ public class WaterManager implements IWaterManager {
 		Xunbao xunbao = xunbaoMapper.getByUserId(userId);
 		if (xunbao == null) {
 			xunbao = new Xunbao();
-			xunbao.setCurrTimes(3);
+			xunbao.setCurrTimes(INIT_TOTAL_TIMES);
 			xunbao.setLastModifyDate(new Date());
 			xunbao.setPart1(0);
 			xunbao.setPart2(0);
@@ -345,7 +381,10 @@ public class WaterManager implements IWaterManager {
 			xunbao.setShuidi(0);
 			xunbao.setTodayTotalTimes(INIT_TOTAL_TIMES);
 			xunbao.setUserId(userId);
-			xunbaoMapper.insert(xunbao);
+			Integer insertRet = xunbaoMapper.insert(xunbao);
+			if (insertRet == null || insertRet != 1) {
+				throw new ManagerException("初始化寻宝数据失败");
+			}
 		}
 		Integer shuidi = xunbao.getShuidi();
 		Integer currParts = 0;
@@ -598,5 +637,45 @@ public class WaterManager implements IWaterManager {
 			pkResult.setPkRet("平");
 		}
 		return pkResult;
+	}
+
+	@Override
+	public boolean finishedShare(Long userId, String signature) throws ManagerException {
+
+		String val = ehCacheManager.getFromCache(CacheType.HOUR1, signature);
+		if (val == null) {
+			return false;
+		}
+		Xunbao xunbao = xunbaoMapper.getByUserId(userId);
+		Integer ret = null;
+		if (xunbao == null) {
+			xunbao = new Xunbao();
+			xunbao.setCurrTimes(MAX_TOTAL_TIMES);
+			xunbao.setLastModifyDate(new Date());
+			xunbao.setPart1(0);
+			xunbao.setPart2(0);
+			xunbao.setPart3(0);
+			xunbao.setPart4(0);
+			xunbao.setPart5(0);
+			xunbao.setShuidi(0);
+			xunbao.setTodayTotalTimes(MAX_TOTAL_TIMES);
+			xunbao.setUserId(userId);
+			ret = xunbaoMapper.insert(xunbao);
+		} else {
+			Integer todayTotalTimes = xunbao.getTodayTotalTimes();
+			Integer currTimes = xunbao.getCurrTimes();
+			Date lastModTime = xunbao.getLastModifyDate();
+			lastModTime = DateUtils.truncate(lastModTime, Calendar.DATE);
+			if (lastModTime.before(DateUtils.truncate(new Date(), Calendar.DATE))) {
+				todayTotalTimes = INIT_TOTAL_TIMES;
+				currTimes = INIT_TOTAL_TIMES;
+			}
+			if (todayTotalTimes < MAX_TOTAL_TIMES) {
+				todayTotalTimes++;
+				currTimes++;
+			}
+			ret = xunbaoMapper.updateCurr(userId, currTimes, todayTotalTimes);
+		}
+		return (ret == null || ret != 1) ? false : true;
 	}
 }

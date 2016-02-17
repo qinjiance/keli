@@ -29,6 +29,7 @@ public class WaterQ extends BaseObject {
 
 	private Long id;
 	private String location;
+	private String city;
 	private Long userId;
 	private String lati;
 	private String longi;
@@ -52,6 +53,14 @@ public class WaterQ extends BaseObject {
 	 * 
 	 */
 	public WaterQ() {
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
 	}
 
 	/**

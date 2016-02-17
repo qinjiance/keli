@@ -4,11 +4,11 @@
 <mapper namespace="com.qinjiance.keli.mapper.WaterQMapper">
     <insert id="insert" parameterType="waterQ">
         INSERT INTO 
-    		water_q (user_id, lati, longi, yinshui, model_id, location,
+    		water_q (user_id, lati, longi, yinshui, model_id, location, city,
     		model_water_q, model_loca, model_lati, model_longi, tongzhuangshui, yinshuiji, local_water_q, yinshui_water_q,
     		tong_water_q, yinshuiji_water_q, zonghe_water_q, create_time, update_time) 
     	VALUES 
-    		(#{userId}, #{lati}, #{longi}, #{yinshui}, #{modelId}, #{location},
+    		(#{userId}, #{lati}, #{longi}, #{yinshui}, #{modelId}, #{location}, #{city},
     		#{modelWaterQ}, #{modelLoca}, #{modelLati}, #{modelLongi}, #{tongzhuangshui}, #{yinshuiji}, #{localWaterQ}, #{yinshuiWaterQ},
     		#{tongWaterQ}, #{yinshuijiWaterQ}, #{zongheWaterQ}, now(), now())
     </insert>

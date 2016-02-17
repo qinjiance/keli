@@ -5,15 +5,15 @@ package com.qinjiance.keli.manager.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import module.laohu.commons.util.HttpClientUtil;
-import module.laohu.commons.util.JsonUtils;
-import module.laohu.commons.util.SpringUtils;
-import module.laohu.commons.util.WebUtils;
-
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +28,23 @@ import com.qinjiance.keli.manager.IWeixinManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
 import com.qinjiance.keli.manager.impl.EhCacheManager.CacheType;
 import com.qinjiance.keli.mapper.UserMapper;
+import com.qinjiance.keli.mapper.WeixinAccessTokenMapper;
 import com.qinjiance.keli.mapper.WeixinThirdUserMapper;
 import com.qinjiance.keli.model.po.User;
+import com.qinjiance.keli.model.po.WeixinAccessToken;
 import com.qinjiance.keli.model.po.WeixinThirdUser;
+import com.qinjiance.keli.model.vo.WeixinAccessTokenVo;
+import com.qinjiance.keli.model.vo.WeixinJsApiTicket;
+import com.qinjiance.keli.model.vo.WeixinJsConfig;
 import com.qinjiance.keli.model.vo.WeixinPublicAccessToken;
 import com.qinjiance.keli.model.vo.WeixinPublicUser;
 import com.qinjiance.keli.util.CookieUtil;
 import com.qinjiance.keli.util.RandomUtil;
+
+import module.laohu.commons.util.HttpClientUtil;
+import module.laohu.commons.util.JsonUtils;
+import module.laohu.commons.util.SpringUtils;
+import module.laohu.commons.util.WebUtils;
 
 /**
  * @author Administrator
@@ -56,6 +66,9 @@ public class WeixinManager implements IWeixinManager {
 	private final static String PUBLIC_OAUTH_USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo";
 	private final static String PUBLIC_OAUTH_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";
 
+	private final static String PUBLIC_JSAPI_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";
+	private final static String PUBLIC_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token";
+
 	@Value(value = "#{configProperties['weixin_oauth_redirect_url']}")
 	private String WEIXIN_OAUTH_REDIRECT_URL = "";
 
@@ -67,6 +80,8 @@ public class WeixinManager implements IWeixinManager {
 	private UserMapper userMapper;
 	@Autowired
 	private ISequenceManager sequenceManager;
+	@Autowired
+	private WeixinAccessTokenMapper weixinAccessTokenMapper;
 
 	/**
 	 * 
@@ -189,5 +204,102 @@ public class WeixinManager implements IWeixinManager {
 			return null;
 		}
 		return location;
+	}
+
+	@Override
+	public WeixinJsConfig getWeixinJsConfig(String url) throws ManagerException {
+		WeixinJsConfig config = new WeixinJsConfig();
+		config.setAppid(APP_ID);
+		List<String> jsApiList = new ArrayList<String>();
+		jsApiList.add("onMenuShareTimeline");
+		jsApiList.add("onMenuShareAppMessage");
+		jsApiList.add("onMenuShareQQ");
+		jsApiList.add("onMenuShareWeibo");
+		jsApiList.add("onMenuShareQQ");
+		jsApiList.add("onMenuShareQZone");
+		config.setJsApiList(jsApiList);
+		config.setNonceStr(RandomUtil.getUUID(1));
+		config.setTimestamp(System.currentTimeMillis());
+
+		WeixinAccessToken weixinAccessToken = weixinAccessTokenMapper.getByAppid(APP_ID);
+		if (weixinAccessToken == null || (weixinAccessToken.getJsapiTicketExpiresIn() * 1000
+				+ weixinAccessToken.getJsapiTicketUpdateTime().getTime()) <= System.currentTimeMillis()) {
+			synchronized (this) {
+				Map<String, String> accessTokenParams = new HashMap<String, String>();
+				accessTokenParams.put("grant_type", "client_credential");
+				accessTokenParams.put("appid", APP_ID);
+				accessTokenParams.put("secret", APP_SECRET);
+				String accessTokenRes = null;
+				try {
+					accessTokenRes = HttpClientUtil.invokeGet(PUBLIC_ACCESS_TOKEN_URL, accessTokenParams,
+							Constants.CHARSET, Constants.HTTP_TIMEOUT, Constants.SO_TIMEOUT);
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+					throw new ManagerException("网络错误，请稍后再试");
+				}
+				if (StringUtils.isBlank(accessTokenRes)) {
+					throw new ManagerException("获取微信token错误，请稍后再试");
+				}
+				WeixinAccessTokenVo accessToken = JsonUtils.parseToObject(accessTokenRes, WeixinAccessTokenVo.class);
+				if (accessToken == null || StringUtils.isBlank(accessToken.getAccess_token())) {
+					throw new ManagerException("获取微信token失败，请稍后再试");
+				}
+
+				Map<String, String> jsapiTicketParams = new HashMap<String, String>();
+				jsapiTicketParams.put("access_token", accessToken.getAccess_token());
+				jsapiTicketParams.put("type", "jsapi");
+				String jsapiTicketRes = null;
+				try {
+					jsapiTicketRes = HttpClientUtil.invokeGet(PUBLIC_JSAPI_TICKET_URL, jsapiTicketParams,
+							Constants.CHARSET, Constants.HTTP_TIMEOUT, Constants.SO_TIMEOUT);
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+					throw new ManagerException("网络错误，请稍后再试");
+				}
+				if (StringUtils.isBlank(jsapiTicketRes)) {
+					throw new ManagerException("获取微信jsapiTicket错误，请稍后再试");
+				}
+				WeixinJsApiTicket jsapiTicket = JsonUtils.parseToObject(jsapiTicketRes, WeixinJsApiTicket.class);
+				if (jsapiTicket == null || jsapiTicket.getErrcode() == null || jsapiTicket.getErrcode() != 0) {
+					throw new ManagerException("获取微信jsapiTicket失败，请稍后再试");
+				}
+				Integer ret = null;
+				if (weixinAccessToken == null) {
+					weixinAccessToken = new WeixinAccessToken();
+					weixinAccessToken.setAppid(APP_ID);
+					weixinAccessToken.setAccessToken(accessToken.getAccess_token());
+					weixinAccessToken.setAccessTokenExpiresIn(accessToken.getExpires_in() - 60 * 5);
+					weixinAccessToken.setAccessTokenUpdateTime(new Date());
+					weixinAccessToken.setJsapiTicket(jsapiTicket.getTicket());
+					weixinAccessToken.setJsapiTicketExpiresIn(jsapiTicket.getExpires_in() - 60 * 5);
+					weixinAccessToken.setJsapiTicketUpdateTime(new Date());
+					ret = weixinAccessTokenMapper.insert(weixinAccessToken);
+				} else {
+					weixinAccessToken.setAccessToken(accessToken.getAccess_token());
+					weixinAccessToken.setAccessTokenExpiresIn(accessToken.getExpires_in() - 60 * 5);
+					weixinAccessToken.setAccessTokenUpdateTime(new Date());
+					weixinAccessToken.setJsapiTicket(jsapiTicket.getTicket());
+					weixinAccessToken.setJsapiTicketExpiresIn(jsapiTicket.getExpires_in() - 60 * 5);
+					weixinAccessToken.setJsapiTicketUpdateTime(new Date());
+					ret = weixinAccessTokenMapper.update(APP_ID, weixinAccessToken.getAccessToken(),
+							weixinAccessToken.getAccessTokenExpiresIn(), weixinAccessToken.getAccessTokenUpdateTime(),
+							weixinAccessToken.getJsapiTicket(), weixinAccessToken.getJsapiTicketExpiresIn(),
+							weixinAccessToken.getJsapiTicketUpdateTime());
+				}
+				if (ret == null || ret != 1) {
+					throw new ManagerException("刷新微信token失败，请稍后再试");
+				}
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("jsapi_ticket=").append(weixinAccessToken.getJsapiTicket()).append("&noncestr=")
+				.append(config.getNonceStr()).append("&timestamp=").append(config.getTimestamp()).append("&url=")
+				.append(url);
+		config.setSignature(DigestUtils.shaHex(sb.toString()));
+
+		ehCacheManager.putToCache(CacheType.HOUR1, config.getSignature(), "1");
+
+		return config;
 	}
 }

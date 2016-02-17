@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qinjiance.keli.mapper.WeixinAccessTokenMapper">
+    <insert id="insert" parameterType="weixinAccessToken">
+        INSERT INTO 
+    		weixin_access_token (appid, access_token, access_token_expires_in, access_token_update_time, jsapi_ticket, 
+    		jsapi_ticket_expires_in, jsapi_ticket_update_time, create_time, update_time) 
+    	VALUES 
+    		(#{appid}, #{accessToken}, #{accessTokenExpiresIn}, #{accessTokenUpdateTime}, #{jsapiTicket}, 
+    		#{jsapiTicketExpiresIn}, #{jsapiTicketUpdateTime}, now(), now())
+    </insert>
+</mapper>

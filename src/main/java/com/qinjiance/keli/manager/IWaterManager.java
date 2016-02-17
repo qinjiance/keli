@@ -48,4 +48,6 @@ public interface IWaterManager {
 	public MyWaterQSimple getMyWaterQSimple(Long userId) throws ManagerException;
 
 	public PkResult pk(Long userId, Long pkUserId) throws ManagerException;
+
+	public boolean finishedShare(Long userId, String signature) throws ManagerException;
 }

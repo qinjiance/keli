@@ -6,6 +6,7 @@ package com.qinjiance.keli.manager;
 import javax.servlet.http.HttpServletResponse;
 
 import com.qinjiance.keli.manager.exception.ManagerException;
+import com.qinjiance.keli.model.vo.WeixinJsConfig;
 
 /**
  * @author Administrator
@@ -19,4 +20,6 @@ public interface IWeixinManager {
 
 	public String weixinPublicOAuthLogin(String code, String state, HttpServletResponse httpServletResponse)
 			throws ManagerException;
+
+	public WeixinJsConfig getWeixinJsConfig(String url) throws ManagerException;
 }

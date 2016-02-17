@@ -1,12 +1,12 @@
 package com.qinjiance.keli.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import module.laohu.commons.util.CheckStyleUtil;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +14,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.qinjiance.keli.annotation.NeedCookie;
 import com.qinjiance.keli.annotation.SkipWhenUserLogin;
 import com.qinjiance.keli.constants.Constants;
+import com.qinjiance.keli.constants.MessageCode;
 import com.qinjiance.keli.manager.IWeixinManager;
 import com.qinjiance.keli.manager.exception.ManagerException;
+import com.qinjiance.keli.model.vo.WeixinJsConfig;
+
+import module.laohu.commons.model.ResponseResult;
+import module.laohu.commons.util.CheckStyleUtil;
 
 /**
  * @author "Jiance Qin"
@@ -35,7 +41,7 @@ import com.qinjiance.keli.manager.exception.ManagerException;
 public class IndexController extends BaseKeliController {
 
 	@Autowired
-	private IWeixinManager WeixinManager;
+	private IWeixinManager weixinManager;
 
 	/**
 	 * 首页
@@ -72,7 +78,7 @@ public class IndexController extends BaseKeliController {
 			}
 			resultMap.put("location", location);
 
-			weixinOAuthUrl = WeixinManager.getWeixinPublicOAuthUrl(location);
+			weixinOAuthUrl = weixinManager.getWeixinPublicOAuthUrl(location);
 			resultMap.put("weixinOAuthUrl", weixinOAuthUrl);
 		} catch (ManagerException e) {
 			resultMap.put(e.getClass().getSimpleName(), e.getMessage());
@@ -92,7 +98,7 @@ public class IndexController extends BaseKeliController {
 		String loginRedirect = "";
 		try {
 			if (StringUtils.isNotBlank(code)) {
-				String location = WeixinManager.weixinPublicOAuthLogin(code, state, response);
+				String location = weixinManager.weixinPublicOAuthLogin(code, state, response);
 				if (StringUtils.isNotBlank(location)) {
 					loginRedirect = location;
 				}
@@ -105,5 +111,28 @@ public class IndexController extends BaseKeliController {
 		// log记录结果用
 		request.setAttribute(Constants.REQUEST_RETURN_KEY, resultMap);
 		return REDIRECT + loginRedirect;
+	}
+
+	@RequestMapping(value = "/getJsapiConfig")
+	@ResponseBody
+	public ResponseResult<WeixinJsConfig> getJsapiConfig(String url, HttpServletRequest request) {
+		ResponseResult<WeixinJsConfig> rr = new ResponseResult<WeixinJsConfig>();
+		rr.setCode(MessageCode.SERVICE_INTERNAL_ERROR.getCode());
+		try {
+			try {
+				url = URLDecoder.decode(url, Constants.CHARSET);
+			} catch (UnsupportedEncodingException e) {
+				url = URLDecoder.decode(url);
+			}
+			WeixinJsConfig weixinJsConfig = weixinManager.getWeixinJsConfig(url);
+			rr.setCode(MessageCode.SUCC_0.getCode());
+			rr.setResult(weixinJsConfig);
+		} catch (ManagerException e) {
+			rr.setMessage(e.getMessage());
+		}
+
+		// log记录结果用
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, rr);
+		return rr;
 	}
 }

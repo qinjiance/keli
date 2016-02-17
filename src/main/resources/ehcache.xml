@@ -322,4 +322,15 @@
             maxElementsOnDisk="0"
             memoryStoreEvictionPolicy="LRU">
     </cache>
+     <cache name="hour1Cache"
+    		maxElementsInMemory="10000000"
+            eternal="false"
+            overflowToDisk="false"
+            diskPersistent="false"
+            diskSpoolBufferSizeMB="0"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
+            maxElementsOnDisk="10000000"
+            memoryStoreEvictionPolicy="LRU">
+    </cache>
 </ehcache>

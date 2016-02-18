@@ -192,6 +192,50 @@ public class WaterController extends BaseKeliController {
 	}
 
 	@NeedCookie
+	@RequestMapping(value = "/pkCity")
+	public String pkCity(ModelMap model, HttpServletRequest request) {
+		// log记录结果用
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Long userId = CookieUtil.getUserIdFromCookie();
+			MyWaterQSimple myWaterQ = waterManager.getMyWaterQSimple(userId);
+			model.put("myWaterQ", myWaterQ);
+
+			List<String> cities = waterManager.getCities();
+			model.put("cities", cities);
+
+			List<UserPosition> userPositions = waterManager.getUsersByUserCity(userId, myWaterQ.getCity());
+			model.put("userPositions", userPositions);
+		} catch (ManagerException e) {
+			resultMap.put(e.getClass().getSimpleName(), e.getMessage());
+		}
+
+		// log记录结果用
+		resultMap.putAll(model);
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, resultMap);
+		return "water/pkCity";
+	}
+
+	@NeedCookie
+	@RequestMapping(value = "/findPkByCity")
+	@ResponseBody
+	public ResponseResult<List<UserPosition>> findPkByCity(@RequestParam String city, HttpServletRequest request) {
+		ResponseResult<List<UserPosition>> rr = new ResponseResult<List<UserPosition>>();
+		rr.setCode(MessageCode.SERVICE_INTERNAL_ERROR.getCode());
+		try {
+			List<UserPosition> userPositions = waterManager.getUsersByUserCity(CookieUtil.getUserIdFromCookie(), city);
+			rr.setCode(MessageCode.SUCC_0.getCode());
+			rr.setResult(userPositions);
+		} catch (ManagerException e) {
+			rr.setMessage(e.getMessage());
+		}
+
+		// log记录结果用
+		request.setAttribute(Constants.REQUEST_RETURN_KEY, rr);
+		return rr;
+	}
+
+	@NeedCookie
 	@RequestMapping(value = "/pk")
 	@ResponseBody
 	public ResponseResult<PkResult> pk(@RequestParam Long pkUserId, HttpServletRequest request) {

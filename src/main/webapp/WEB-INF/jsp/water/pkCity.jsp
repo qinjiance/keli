@@ -10,26 +10,36 @@
 <!-- css links -->
 <%@include file="../common/links.jspf"%>
 <link rel="stylesheet" type="text/css"
-	href="${ctx}<fmt:message key="static.resources.host"/>/css/pkAround.css" />
+	href="${ctx}<fmt:message key="static.resources.host"/>/css/pkCity.css" />
 </head>
 <body>
 	<!-- header -->
 	<%@include file="../common/header2.jspf"%>
 	
 	<div class="bgbg">
-		<p class="navi"><a class="on" href="${ctx}pkAround">附近</a>|<a href="${ctx}pkCity">全国</a></p>
+		<p class="navi"><a href="${ctx}pkAround">附近</a>|<a class="on" href="${ctx}pkCity">全国</a></p>
 		<p class="myq"><img src="${avatarImg}" /><span class="loc">${myWaterQ.loca}</span><span class="deg">健康度：</span><span class="degg">${myWaterQ.waterQ}</span></p>
+		<p class="cities"><span class="cn">城市：</span>
+			<select class="selCity">
+				<c:forEach items="${cities}" var="city">
+					<option value="${city}" ${(city==myWaterQ.city)?'selected="selected"':''}>${city}</option>
+				</c:forEach>
+			</select>
+		</p>
 		<c:forEach items="${userPositions}" var="up">
 			<div class="uplist">
 				<img class="hea" src="${up.headImg}" />
-				<div class="des">
-					<p>${up.location}</p>
-					<p>${up.distance} 米</p>
-				</div>
+				<p class="des">${up.location}</p>
 				<img class="op" userId="${up.userId}" src="${ctx}<fmt:message key="static.resources.host"/>/images/dao.png" />
 			</div>
 		</c:forEach>
 	</div>	
+	
+	<div id="uplist" class="uplist" style="display:none;">
+		<img class="hea" src="" />
+		<p class="des"></p>
+		<img class="op" userId="" src="${ctx}<fmt:message key="static.resources.host"/>/images/dao.png" />
+	</div>
 	
 	<div id="popget" class="popget">
 		<div class="pop1">
@@ -110,6 +120,20 @@
 			});
 			$("#popget .okbtn").click(function(){
 				$(this).closest(".popget").remove();
+			});
+			$(".selCity").change(function(){
+				$.getJSON("${ctx}findPkByCity",{city:$(this).val()},function(ret){
+				    if(ret.code==0){
+						$(".bgbg .uplist").remove();
+						$(ret.result).each(function(i,e){
+							var newUp=$("#uplist").clone(true).removeAttr("id").show();
+							newUp.find(".hea").attr("src",e.headImg);
+							newUp.find(".des").html(e.location);
+							newUp.find(".op").attr("userId",e.userId);
+							$(".bgbg").append(newUp);
+						});
+				    }
+				 });
 			});
 		});
 	</script>

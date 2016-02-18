@@ -13,6 +13,7 @@ li{ list-style:none;}
 
 body{ background-color:#fff; width:640px; overflow:hidden; text-align:center; color:#000; font-family: 'Microsoft YaHei';font-size: 12px;}
 .header .title{color:rgb(176,176,176);margin-top: 30px;margin-bottom: 10px;font-size: 30px;}
+.header .title.blk{color:#000}
 .header .tl{text-align:left;}
 .header .avatar{margin-left:50px;margin-right: 100px; width: 60px;vertical-align: middle;-moz-border-radius: 50%;/* Gecko browsers */-webkit-border-radius: 50%;/* Webkit browsers */border-radius:50%;/* W3C syntax */}
 

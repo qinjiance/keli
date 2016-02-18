@@ -568,7 +568,7 @@ public class WaterManager implements IWaterManager {
 			position = new UserPosition();
 			position.setLocation(item.getLocation());
 			position.setUserId(item.getUserId());
-			position.setZongheTds(waterQ.getZongheWaterQ());
+			position.setZongheTds(item.getZongheWaterQ());
 			position.setDistance(getDistance(Double.valueOf(waterQ.getLongi()), Double.valueOf(waterQ.getLati()),
 					Double.valueOf(item.getLongi()), Double.valueOf(item.getLati())));
 			positionList.add(position);
@@ -605,6 +605,7 @@ public class WaterManager implements IWaterManager {
 		MyWaterQSimple myWaterQ = new MyWaterQSimple();
 		myWaterQ.setLoca(waterQ.getLocation());
 		myWaterQ.setWaterQ(waterQ.getZongheWaterQ());
+		myWaterQ.setCity(waterQ.getCity());
 		return myWaterQ;
 	}
 
@@ -677,5 +678,39 @@ public class WaterManager implements IWaterManager {
 			ret = xunbaoMapper.updateCurr(userId, currTimes, todayTotalTimes);
 		}
 		return (ret == null || ret != 1) ? false : true;
+	}
+
+	@Override
+	public List<String> getCities() throws ManagerException {
+		return waterQMapper.getCities();
+	}
+
+	@Override
+	public List<UserPosition> getUsersByUserCity(Long userId, String city) throws ManagerException {
+		List<WaterQ> randoms = waterQMapper.getByCity(userId, city);
+		if (randoms == null || randoms.isEmpty()) {
+			return null;
+		}
+
+		List<Long> userIds = new ArrayList<Long>();
+		List<UserPosition> positionList = new ArrayList<UserPosition>();
+		UserPosition position = null;
+		for (WaterQ item : randoms) {
+			userIds.add(item.getUserId());
+			position = new UserPosition();
+			position.setLocation(item.getLocation());
+			position.setUserId(item.getUserId());
+			position.setZongheTds(item.getZongheWaterQ());
+			positionList.add(position);
+		}
+		List<WeixinThirdUser> thirdUsers = weixinThirdUserMapper.getByUserIds(userIds);
+		Map<Long, WeixinThirdUser> tMap = new HashMap<Long, WeixinThirdUser>();
+		for (WeixinThirdUser third : thirdUsers) {
+			tMap.put(third.getUserId(), third);
+		}
+		for (UserPosition up : positionList) {
+			up.setHeadImg(tMap.get(up.getUserId()).getHeadimgurl());
+		}
+		return positionList;
 	}
 }

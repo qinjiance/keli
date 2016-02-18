@@ -24,12 +24,21 @@ public class MyWaterQSimple extends BaseObject {
 
 	private String loca;
 	private Integer waterQ;
+	private String city;
 
 	/**
 	 * 
 	 */
 	public MyWaterQSimple() {
 
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
 	}
 
 	public String getLoca() {

@@ -27,6 +27,10 @@ import com.qinjiance.keli.model.vo.XunbaoResult;
  */
 public interface IWaterManager {
 
+	public List<String> getCities() throws ManagerException;
+
+	public List<UserPosition> getUsersByUserCity(Long userId, String city) throws ManagerException;
+
 	public WaterQPos getWaterQ(String lati, String longi, Integer yinshui, Integer tongzhuangshui, Integer baojie)
 			throws ManagerException;
 

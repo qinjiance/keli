@@ -24,6 +24,12 @@ public interface WaterQMapper {
 
 	public Integer insert(WaterQ waterQ);
 
+	@Select("select city from water_q group by city")
+	public List<String> getCities();
+
+	@Select("select * from water_q where city = #{city} and user_id <> #{userId} order by rand() limit 30")
+	public List<WaterQ> getByCity(@Param("userId") Long userId, @Param("city") String city);
+
 	@Select("select * from water_q where user_id = #{userId}")
 	public WaterQ getByUserId(@Param("userId") Long userId);
 

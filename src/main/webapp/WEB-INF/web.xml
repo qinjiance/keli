@@ -60,23 +60,23 @@
     	<listener-class>com.github.miemiedev.mybatis.paginator.CleanupMybatisPaginatorListener</listener-class>  
 	</listener>
     
-    <!-- <error-page>
+    <error-page>
     	<error-code>404</error-code>
         <location>/error/404</location>
     </error-page>
     
     <error-page>
     	<error-code>500</error-code>
-        <location>/error/500</location>
+        <location>/error/504</location>
     </error-page>
     
     <error-page>
     	<error-code>400</error-code>
-        <location>/error/400</location>
+        <location>/error/404</location>
     </error-page>
     
     <error-page>
         <error-code>503</error-code>
-        <location>/error/503</location>
-    </error-page>-->
+        <location>/error/404</location>
+    </error-page>
 </web-app>

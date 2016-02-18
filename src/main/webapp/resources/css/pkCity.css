@@ -11,6 +11,9 @@
 .myq .loc{color:rgb(214,214,214);margin-left: 20px;}
 .myq .deg{color:#000;font-weight: bold;margin-left: 100px;}
 .myq .degg{color:rgb(255,146,0);font-weight: bold;font-size: 40px;vertical-align: middle;}
+.cities{padding: 50px 0;border-bottom: 1px solid rgb(235,235,235);}
+.cities .cn{color:#000;}
+.cities select{font-size: 35px;}
 .uplist{padding: 20px 0;text-align: left;border-bottom: 1px solid rgb(235,235,235);}
 .uplist img.hea{margin-left:60px;width: 60px;vertical-align: baseline;-moz-border-radius: 50%;-webkit-border-radius: 50%;border-radius:50%;}
 .uplist .des{color:rgb(173,173,173);margin-left: 20px;display: inline-block;width: 350px;}

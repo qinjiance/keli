@@ -43,6 +43,12 @@ public class IndexController extends BaseKeliController {
 	@Autowired
 	private IWeixinManager weixinManager;
 
+	@RequestMapping(value = { "/error/404" })
+	public String err404() {
+
+		return "error/404";
+	}
+
 	/**
 	 * 首页
 	 * 

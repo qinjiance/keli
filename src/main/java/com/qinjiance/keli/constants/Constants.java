@@ -1,7 +1,7 @@
 package com.qinjiance.keli.constants;
 
 /**
- * @author "Jiance Qin", tianbenzhen@pwrd.com
+ *
  * 
  * @date 2014年7月5日
  * 
